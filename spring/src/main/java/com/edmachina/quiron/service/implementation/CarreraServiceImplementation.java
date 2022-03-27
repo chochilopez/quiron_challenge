@@ -18,11 +18,11 @@ public class CarreraServiceImplementation implements CarreraServiceInterfase {
     private final CarreraRepository repositorio;
 
     @Override
-    public Optional<Carrera> findByEstudianteIdAndTituloId(Long idEstudiante, Long idTitulo) {
-        log.info("Buscando la entidad Carrera con id_estudiante: {} e id_titulo: {}.", idEstudiante, idTitulo);
-        Optional<Carrera> carrera = repositorio.findByEstudianteIdAndTituloId(idEstudiante, idTitulo);
+    public Optional<Carrera> findById(Long id) {
+        log.info("Buscando la entidad Carrera con id: {}.", id);
+        Optional<Carrera> carrera = repositorio.findById(id);
         if (carrera.isEmpty()) {
-            log.info("No existe la entidad Carrera con id_estudiante: {} e id_titulo: {}.", idEstudiante, idTitulo);
+            log.info("No existe la entidad Carrera con id: {}.", id);
         } else {
             log.info("Se encontró la entidad Carrera: {}.", carrera);
         }
@@ -69,7 +69,7 @@ public class CarreraServiceImplementation implements CarreraServiceInterfase {
     public Carrera update(Carrera carrera) {
         try {
             log.info("Actualizando la entidad Carrera: {}.", carrera);
-            Optional<Carrera> entidad = repositorio.findByEstudianteIdAndTituloId(carrera.getEstudiante().getId(), carrera.getTitulo().getId());
+            Optional<Carrera> entidad = repositorio.findById(carrera.getId());
             if (entidad.isEmpty()) {
                 log.error("No existe la entidad Carrera que desea actualizar.");
                 return null;
@@ -84,12 +84,11 @@ public class CarreraServiceImplementation implements CarreraServiceInterfase {
     }
 
     @Override
-    public Boolean delete(Long idEstudiante, Long idTitulo) {
-        log.info("Borrando la entidad Carrera con id_estudiante: {} e id_titulo: {}.", idEstudiante, idTitulo);
-        Optional<Carrera> carrera = repositorio.findByEstudianteIdAndTituloId(idEstudiante, idTitulo);
+    public Boolean delete(Long id) {
+        log.info("Borrando la entidad Carrera con id: {}.", id);
+        Optional<Carrera> carrera = repositorio.findById(id);
         if (carrera.isEmpty()) {
-            log.error("No se encontro ninguna entidad Carrera con id_estudiante: {} e id_titulo: {}.", idEstudiante, idTitulo);
-            return false;
+            log.error("No se encontro ninguna entidad Carrera con id: {}.", id);
         }
         log.info("Borrando la entidad Carrera: {}.", carrera.get());
         repositorio.delete(carrera.get());

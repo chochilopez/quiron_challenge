@@ -1,25 +1,31 @@
 package com.edmachina.quiron.controller.form;
 
 import com.edmachina.quiron.model.Carrera;
-import com.edmachina.quiron.model.Estudiante;
-import com.edmachina.quiron.model.Titulo;
+import com.edmachina.quiron.model.Materia;
+import com.edmachina.quiron.model.enumerator.EnumTituloGrado;
 import lombok.Getter;
-
 import java.util.Date;
+import java.util.Set;
 
 @Getter
 public class CarreraForm {
-    private Estudiante estudiante;
-    private Titulo titulo;
+    private String titulo;
     private Date ingreso;
+    private Date egreso;
+    private EnumTituloGrado grado;
+    Set<Materia> materias;
 
     public Carrera formCarreraDTO(Carrera dto){
-        if (this.estudiante != null)
-            dto.setEstudiante(this.getEstudiante());
+        if (this.egreso != null)
+            dto.setEgreso(this.getEgreso());
         if (this.titulo != null)
             dto.setTitulo(this.getTitulo());
         if (this.ingreso != null)
             dto.setIngreso(this.getIngreso());
+        if (this.grado != null)
+            dto.setGrado(this.getGrado());
+        if (this.materias != null)
+            dto.setMaterias(this.getMaterias());
 
         return dto;
     }

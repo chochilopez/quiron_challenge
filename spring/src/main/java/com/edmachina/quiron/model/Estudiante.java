@@ -21,10 +21,16 @@ public class Estudiante {
     private String direccion;
     private String telefono;
 
-    @OneToMany(mappedBy = "estudiante")
-    Set<Cursada> cursadas;
-
-    @OneToMany(mappedBy = "estudiante")
+    @OneToMany
     Set<Carrera> carreras;
+
+    public Estudiante(String nombre, String apellido, String email, String direccion, String telefono, Set<Carrera> carreras) {
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.email = email;
+        this.direccion = direccion;
+        this.telefono = telefono;
+        this.carreras = carreras;
+    }
 }
 

@@ -9,7 +9,7 @@ import java.util.Set;
 
 public interface EstudianteServiceInterfase {
 
-    Set<Carrera> addCareer(Long idEstudiante, Long idTitulo);
+//    Set<Carrera> addCareer(Long idEstudiante, Long idTitulo);
 
     Optional<Estudiante> findById(Long id);
     List<Estudiante> findAll();

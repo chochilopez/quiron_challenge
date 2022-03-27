@@ -2,10 +2,9 @@ package com.edmachina.quiron.service.implementation;
 
 import com.edmachina.quiron.helper.Helper;
 import com.edmachina.quiron.model.*;
-import com.edmachina.quiron.model.enumerator.EnumEstadoCursada;
+import com.edmachina.quiron.model.enumerator.EnumEstadoMateria;
 import com.edmachina.quiron.repository.CarreraRepository;
 import com.edmachina.quiron.repository.EstudianteRepository;
-import com.edmachina.quiron.repository.TituloRepository;
 import com.edmachina.quiron.service.EstudianteServiceInterfase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,39 +18,37 @@ import java.util.*;
 public class EstudianteServiceImplementation implements EstudianteServiceInterfase {
 
     private final EstudianteRepository repositorio;
-    private final TituloRepository tituloRepository;
     private final CarreraRepository carreraRepository;
 
-    @Override
-    public Set<Carrera> addCareer(Long idEstudiante, Long idTitulo) {
-        Optional<Estudiante> estudiante = this.findById(idEstudiante);
-        if (estudiante.isEmpty())
-            return null;
-        Optional<Titulo> titulo = tituloRepository.findById(idTitulo);
-        if (titulo.isEmpty())
-            return null;
-        Set<Carrera> carreras = estudiante.get().getCarreras();
-        if (carreras == null) {
-            carreras = new HashSet<>();
-        }
-        Carrera carrera = new Carrera();
-        carrera.setEstudiante(estudiante.get());
-        carrera.setTitulo(titulo.get());
-        carrera.setIngreso(Helper.getHoy());
-        carreras.add(carrera);
-        estudiante.get().setCarreras(carreras);
-        Set<Cursada> cursadas = estudiante.get().getCursadas();
-        if (cursadas == null) {
-            cursadas = new HashSet<>();
-        }
-        for (Materia materia : titulo.get().getMaterias()) {
-            Cursada cursada = new Cursada(estudiante.get(), materia, EnumEstadoCursada.ESTADO_CURSADA_SIN_CURSAR, 0, null, null);
-            cursadas.add(cursada);
-        }
-        estudiante.get().setCursadas(cursadas);
-        repositorio.save(estudiante.get());
-        return estudiante.get().getCarreras();
-    }
+//    @Override
+//    public Set<Carrera> addCareer(Long idEstudiante, Long idTitulo) {
+//        Optional<Estudiante> estudiante = this.findById(idEstudiante);
+//        if (estudiante.isEmpty())
+//            return null;
+//        Optional<Titulo> titulo = tituloRepository.findById(idTitulo);
+//        if (titulo.isEmpty())
+//            return null;
+//        Carrera carrera = new Carrera(titulo.get(), null, Helper.getHoy(), null);
+//
+//        carrera = carreraRepository.save(carrera);
+//        Set<Carrera> carreras = estudiante.get().getCarreras();
+//        if (carreras == null) {
+//            carreras = new HashSet<>();
+//        }
+//        carreras.add(carrera);
+//        estudiante.get().setCarreras(carreras);
+//        Set<Cursada> cursadas = carrera.getCursadas();
+//        if (cursadas == null) {
+//            cursadas = new HashSet<>();
+//        }
+//        for (Materia materia : titulo.get().getMaterias()) {
+//            Cursada cursada = new Cursada(estudiante.get(), materia, EnumEstadoMateria.ESTADO_CURSADA_SIN_CURSAR, 0, null, null);
+//            cursadas.add(cursada);
+//        }
+//        estudiante.get().setCursadas(cursadas);
+//        repositorio.save(estudiante.get());
+//        return estudiante.get().getCarreras();
+//    }
 
     @Override
     public Optional<Estudiante> findById(Long id) {

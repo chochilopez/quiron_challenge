@@ -1,9 +1,11 @@
 package com.edmachina.quiron.model;
 
+import com.edmachina.quiron.model.enumerator.EnumTituloGrado;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 @Getter
 @Entity
@@ -11,21 +13,30 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class Carrera {
 
-    @EmbeddedId
-    private CarreraKey id = new CarreraKey();
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @ManyToOne
-    @MapsId("estudianteId")
-    private Estudiante estudiante;
+    private String titulo;
 
-    @ManyToOne
-    @MapsId("tituloId")
-    private Titulo titulo;
+    @Enumerated(EnumType.STRING)
+    private EnumTituloGrado grado;
+
+    @OneToMany
+    Set<Materia> materias;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date ingreso;
 
-    public Carrera(Estudiante estudiante, Titulo titulo, Date hoy) {
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date egreso;
+
+    public Carrera(String titulo, EnumTituloGrado grado, Set<Materia> materias, Date ingreso, Date egreso) {
+        this.titulo = titulo;
+        this.grado = grado;
+        this.materias = materias;
+        this.ingreso = ingreso;
+        this.egreso = egreso;
     }
 }
 

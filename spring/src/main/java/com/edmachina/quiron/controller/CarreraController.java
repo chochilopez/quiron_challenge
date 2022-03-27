@@ -29,20 +29,13 @@ public class CarreraController {
         return new ResponseEntity<>(carreras, Helper.cabeceraHTTP("Existen " + carreras.size() + "entidades en Carrera."), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/buscar-por-id/{idEstudiante}/{idTitulo}")
-    public ResponseEntity<Carrera> findById(
-            @PathVariable(name = "idEstudiante") @javax.validation.constraints.Size(min = 1, max = 10) Long idEstudiante,
-            @PathVariable(name = "idTitulo") @javax.validation.constraints.Size(min = 1, max = 10) Long idTitulo
-    ) {
-        Optional<Carrera> carrera = service.findByEstudianteIdAndTituloId(idEstudiante, idTitulo);
+    @GetMapping(value = "/buscar-por-id/{id}")
+    public ResponseEntity<Carrera> findById(@PathVariable(name = "id") @javax.validation.constraints.Size(min = 1, max = 10) Long id) {
+        Optional<Carrera> carrera = service.findById(id);
         if (carrera.isPresent())
-            return new ResponseEntity<>(carrera.get(), Helper.cabeceraHTTP(
-                    "Se encontró la entidad Carrera con idEstudiante " + idEstudiante + " e idTitulo " + idTitulo + "."
-            ), HttpStatus.OK);
+            return new ResponseEntity<>(carrera.get(), Helper.cabeceraHTTP("Se encontró la entidad Carrera con id: " + id + "."), HttpStatus.OK);
         else
-            return ResponseEntity.accepted().headers(Helper.cabeceraHTTP(
-                    "Carrera no posee entidades con idEstudiante " + idEstudiante + " e idTitulo " + idTitulo + "."
-            )).build();
+            return ResponseEntity.accepted().headers(Helper.cabeceraHTTP("Carrera no posee entidades con id: " + id + ".")).build();
     }
 
     @PutMapping
@@ -56,48 +49,31 @@ public class CarreraController {
                     "Fallo al intentar persistir el objeto Carrera."
             )).build();
         } else {
-            return new ResponseEntity<>(carrera, Helper.cabeceraHTTP(
-                    "Se persistió correctamente la entidad Carrera con idEstudiante " + carrera.getEstudiante().getId() + " e idTitulo " + carrera.getTitulo().getId() + "."
-            ), HttpStatus.CREATED);
+            return new ResponseEntity<>(carrera, Helper.cabeceraHTTP("Se persistió correctamente la entidad Carrera con id: " + carrera.getId() + "."), HttpStatus.CREATED);
         }
     }
 
-    @PutMapping("/{idEstudiante}/{idTitulo}")
-    public ResponseEntity<Carrera> update(
-            @Valid @RequestBody CarreraForm CarreraForm,
-            @PathVariable(name = "idEstudiante") @javax.validation.constraints.Size(min = 1, max = 10) Long idEstudiante,
-            @PathVariable(name = "idTitulo") @javax.validation.constraints.Size(min = 1, max = 10) Long idTitulo
-    ) {
-        Optional<Carrera> objeto = service.findByEstudianteIdAndTituloId(idEstudiante, idTitulo);
+    @PutMapping("/{id}")
+    public ResponseEntity<Carrera> update(@Valid @RequestBody CarreraForm CarreraForm, @PathVariable(name = "id") @javax.validation.constraints.Size(min = 1, max = 10) Long id) {
+        Optional<Carrera> objeto = service.findById(id);
         if (objeto.isEmpty()) {
-            return ResponseEntity.accepted().headers(Helper.cabeceraHTTP(
-                    "No existe una entidad Carrera modificable con idEstudiante " + idEstudiante + " e idTitulo " + idTitulo + "."
-            )).build();
+            return ResponseEntity.accepted().headers(Helper.cabeceraHTTP("No existe una entidad Carrera modificable con id: " + id + ".")).build();
         }
         Carrera entidad = service.update(CarreraForm.formCarreraDTO(new Carrera()));
-        return new ResponseEntity<>(entidad, Helper.cabeceraHTTP(
-                "Se modificó y persistió correctamente la entidad Carrera con idEstudiante " + idEstudiante + " e idTitulo " + idTitulo + "."
-        ), HttpStatus.CREATED);
+        return new ResponseEntity<>(entidad, Helper.cabeceraHTTP("Se modificó y persistió correctamente la entidad Carrera con id: " + id + "."), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{idEstudiante}/{idTitulo}")
-    public ResponseEntity<String> delete(
-            @PathVariable(name = "idEstudiante") @javax.validation.constraints.Size(min = 1, max = 10) Long idEstudiante,
-            @PathVariable(name = "idTitulo") @javax.validation.constraints.Size(min = 1, max = 10) Long idTitulo
-    ) {
-        Optional<Carrera> entidad = service.findByEstudianteIdAndTituloId(idEstudiante, idTitulo);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete(@PathVariable(name = "id") @javax.validation.constraints.Size(min = 1, max = 10) Long id) {
+        Optional<Carrera> entidad = service.findById(id);
         if (entidad.isEmpty()) {
-            return ResponseEntity.accepted().headers(Helper.cabeceraHTTP(
-                    "No existe una entidad eliminable con idEstudiante " + idEstudiante + " e idTitulo " + idTitulo + "."
-            )).build();
+            return ResponseEntity.accepted().headers(Helper.cabeceraHTTP("No existe una entidad eliminable con id: " + id + ".")).build();
         }
-        if (service.delete(idEstudiante, idTitulo)) {
-            String mensaje = "Se eliminó correctamente la entidad Carrera con idEstudiante " + idEstudiante + " e idTitulo " + idTitulo + ".";
+        if (service.delete(id)) {
+            String mensaje = "Se eliminó correctamente la entidad Carrera con id: " + id + ".";
             return new ResponseEntity<>(mensaje, Helper.cabeceraHTTP(mensaje), HttpStatus.OK);
         } else {
-            return ResponseEntity.accepted().headers(Helper.cabeceraHTTP(
-                    "Hubo un error al eliminar la entidad con idEstudiante " + idEstudiante + " e idTitulo " + idTitulo + "."
-            )).build();
+            return ResponseEntity.accepted().headers(Helper.cabeceraHTTP("Hubo un error al eliminar la entidad con id: " + id + ".")).build();
         }
     }
 }
