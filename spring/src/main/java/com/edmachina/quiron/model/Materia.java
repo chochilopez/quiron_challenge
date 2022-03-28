@@ -1,15 +1,13 @@
 package com.edmachina.quiron.model;
 
-import com.edmachina.quiron.model.enumerator.EnumEstadoMateria;
 import lombok.*;
-
 import javax.persistence.*;
-import java.util.Date;
 
+@AllArgsConstructor
 @Getter
 @Entity
+@NoArgsConstructor
 @Setter
-@RequiredArgsConstructor
 public class Materia {
 
     @Id
@@ -18,14 +16,7 @@ public class Materia {
 
     private String nombre;
 
-    @Enumerated(EnumType.STRING)
-    private EnumEstadoMateria estado;
-
-    private Integer cursada;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date inicioCursado;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date finCursado;
+    public Materia(String nombre) {
+        this.nombre = nombre;
+    }
 }

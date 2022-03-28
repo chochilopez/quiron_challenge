@@ -1,14 +1,13 @@
 package com.edmachina.quiron.model;
 
+import com.edmachina.quiron.model.enumerator.EnumEstadoEstudiante;
 import lombok.*;
-
 import javax.persistence.*;
-import java.util.Set;
+import java.util.Date;
 
 @Getter
 @Entity
 @Setter
-@RequiredArgsConstructor
 public class Estudiante {
 
     @Id
@@ -21,16 +20,24 @@ public class Estudiante {
     private String direccion;
     private String telefono;
 
-    @OneToMany
-    Set<Carrera> carreras;
+    private EnumEstadoEstudiante status;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date ingresoLead;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date ingresoEstudiante;
 
-    public Estudiante(String nombre, String apellido, String email, String direccion, String telefono, Set<Carrera> carreras) {
+    public Estudiante() {
+    }
+
+    public Estudiante(String nombre, String apellido, String email, String direccion, String telefono, EnumEstadoEstudiante status, Date ingresoLead, Date ingresoEstudiante) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.email = email;
         this.direccion = direccion;
         this.telefono = telefono;
-        this.carreras = carreras;
+        this.status = status;
+        this.ingresoLead = ingresoLead;
+        this.ingresoEstudiante = ingresoEstudiante;
     }
 }
 

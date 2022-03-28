@@ -9,8 +9,8 @@ public interface CarreraServiceInterfase {
 
     Optional<Carrera> findById(Long id);
     List<Carrera> findAll();
-    List<Carrera> saveAll(List<Carrera> carreras) throws Exception;
     Carrera insert(Carrera obj) throws Exception;
     Carrera update(Carrera obj) throws Exception;
     Boolean delete(Long id);
+    Long cantidad();
 }

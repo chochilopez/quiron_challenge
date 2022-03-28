@@ -18,6 +18,13 @@ public class CarreraServiceImplementation implements CarreraServiceInterfase {
     private final CarreraRepository repositorio;
 
     @Override
+    public Long cantidad() {
+        Long cuenta = repositorio.count();
+        log.info("Existen {} entidades en Carrera.", cuenta);
+        return cuenta;
+    }
+
+    @Override
     public Optional<Carrera> findById(Long id) {
         log.info("Buscando la entidad Carrera con id: {}.", id);
         Optional<Carrera> carrera = repositorio.findById(id);
@@ -39,17 +46,6 @@ public class CarreraServiceImplementation implements CarreraServiceInterfase {
             log.info("Se encontraron {} entidades Carrera, incluidas las borradas.", carreras.size());
         }
         return carreras;
-    }
-
-    @Override
-    public List<Carrera> saveAll(List<Carrera> carreras) throws Exception {
-        try {
-            log.info("Insertando listado de entidades Carrera.");
-            return repositorio.saveAll(carreras);
-        } catch (Exception exepcion) {
-            log.error("Se produjo un error al intentar persistir el listado de entidades Carrera.");
-            return null;
-        }
     }
 
     @Override

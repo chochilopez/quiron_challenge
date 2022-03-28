@@ -2,8 +2,9 @@ package com.edmachina.quiron.service.implementation;
 
 import com.edmachina.quiron.helper.Helper;
 import com.edmachina.quiron.model.*;
-import com.edmachina.quiron.model.enumerator.EnumEstadoMateria;
+import com.edmachina.quiron.model.enumerator.EnumEstadoEstudiante;
 import com.edmachina.quiron.repository.CarreraRepository;
+import com.edmachina.quiron.repository.EstudianteCarreraRepository;
 import com.edmachina.quiron.repository.EstudianteRepository;
 import com.edmachina.quiron.service.EstudianteServiceInterfase;
 import lombok.RequiredArgsConstructor;
@@ -18,37 +19,20 @@ import java.util.*;
 public class EstudianteServiceImplementation implements EstudianteServiceInterfase {
 
     private final EstudianteRepository repositorio;
-    private final CarreraRepository carreraRepository;
 
-//    @Override
-//    public Set<Carrera> addCareer(Long idEstudiante, Long idTitulo) {
-//        Optional<Estudiante> estudiante = this.findById(idEstudiante);
-//        if (estudiante.isEmpty())
-//            return null;
-//        Optional<Titulo> titulo = tituloRepository.findById(idTitulo);
-//        if (titulo.isEmpty())
-//            return null;
-//        Carrera carrera = new Carrera(titulo.get(), null, Helper.getHoy(), null);
-//
-//        carrera = carreraRepository.save(carrera);
-//        Set<Carrera> carreras = estudiante.get().getCarreras();
-//        if (carreras == null) {
-//            carreras = new HashSet<>();
-//        }
-//        carreras.add(carrera);
-//        estudiante.get().setCarreras(carreras);
-//        Set<Cursada> cursadas = carrera.getCursadas();
-//        if (cursadas == null) {
-//            cursadas = new HashSet<>();
-//        }
-//        for (Materia materia : titulo.get().getMaterias()) {
-//            Cursada cursada = new Cursada(estudiante.get(), materia, EnumEstadoMateria.ESTADO_CURSADA_SIN_CURSAR, 0, null, null);
-//            cursadas.add(cursada);
-//        }
-//        estudiante.get().setCursadas(cursadas);
-//        repositorio.save(estudiante.get());
-//        return estudiante.get().getCarreras();
-//    }
+    @Override
+    public Long cantidad() {
+        Long cuenta = repositorio.count();
+        log.info("Existen {} entidades en Estudiante.", cuenta);
+        return cuenta;
+    }
+
+    @Override
+    public Long countByStatus(String status) {
+        Long cuenta = repositorio.countByStatus(EnumEstadoEstudiante.valueOf(status));
+        log.info("Existen {} entidades con status {}.", cuenta, status);
+        return cuenta;
+    }
 
     @Override
     public Optional<Estudiante> findById(Long id) {
@@ -72,17 +56,6 @@ public class EstudianteServiceImplementation implements EstudianteServiceInterfa
             log.info("Se encontraron {} entidades Estudiante, incluidas las borradas.", estudiantes.size());
         }
         return estudiantes;
-    }
-
-    @Override
-    public List<Estudiante> saveAll(List<Estudiante> estudiantes) throws Exception {
-        try {
-            log.info("Insertando listado de entidades Estudiante.");
-            return repositorio.saveAll(estudiantes);
-        } catch (Exception exepcion) {
-            log.error("Se produjo un error al intentar persistir el listado de entidades Estudiante.");
-            return null;
-        }
     }
 
     @Override

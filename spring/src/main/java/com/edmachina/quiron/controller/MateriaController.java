@@ -22,6 +22,14 @@ public class MateriaController {
 
     private final MateriaServiceImplementation service;
 
+    @GetMapping(value = "/cantidad")
+    public ResponseEntity<Long> cantidad() {
+        Long cantidad= service.cantidad();
+        if (cantidad == 0)
+            return ResponseEntity.accepted().headers(Helper.cabeceraHTTP("Hay 0 entidades en Materia.")).build();
+        return new ResponseEntity<>(cantidad, Helper.cabeceraHTTP("Existen " + cantidad + " en Materia."), HttpStatus.OK);
+    }
+
     @GetMapping(value = "/todas")
     public ResponseEntity<List<Materia>> getAll() {
         List<Materia> materias = service.findAll();

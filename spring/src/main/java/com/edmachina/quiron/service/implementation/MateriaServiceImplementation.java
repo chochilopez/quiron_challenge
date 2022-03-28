@@ -18,6 +18,13 @@ public class MateriaServiceImplementation implements MateriaServiceInterfase {
     private final MateriaRepository repositorio;
 
     @Override
+    public Long cantidad() {
+        Long cuenta = repositorio.count();
+        log.info("Existen {} entidades en Materia.", cuenta);
+        return cuenta;
+    }
+
+    @Override
     public Optional<Materia> findById(Long id) {
         log.info("Buscando la entidad Materia con id: {}.", id);
         Optional<Materia> materia = repositorio.findById(id);
@@ -39,17 +46,6 @@ public class MateriaServiceImplementation implements MateriaServiceInterfase {
             log.info("Se encontraron {} entidades Materia, incluidas las borradas.", materias.size());
         }
         return materias;
-    }
-
-    @Override
-    public List<Materia> saveAll(List<Materia> materias) throws Exception {
-        try {
-            log.info("Insertando listado de entidades Materia.");
-            return repositorio.saveAll(materias);
-        } catch (Exception exepcion) {
-            log.error("Se produjo un error al intentar persistir el listado de entidades Materia.");
-            return null;
-        }
     }
 
     @Override

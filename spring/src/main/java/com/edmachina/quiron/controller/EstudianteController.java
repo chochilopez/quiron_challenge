@@ -22,12 +22,28 @@ public class EstudianteController {
 
     private final EstudianteServiceImplementation service;
 
+    @GetMapping(value = "/cantidad")
+    public ResponseEntity<Long> cantidad() {
+        Long cantidad= service.cantidad();
+        if (cantidad == 0)
+            return ResponseEntity.accepted().headers(Helper.cabeceraHTTP("Hay 0 entidades en Estudiante.")).build();
+        return new ResponseEntity<>(cantidad, Helper.cabeceraHTTP("Existen " + cantidad + " en Estudiante."), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/cantidad/{status}")
+    public ResponseEntity<Long> cantidad(@PathVariable(name = "status") @javax.validation.constraints.Size(min = 8, max = 20) String status) {
+        Long cantidad= service.countByStatus(status);
+        if (cantidad == 0)
+            return ResponseEntity.accepted().headers(Helper.cabeceraHTTP("Hay 0 entidades con status " + status + ".")).build();
+        return new ResponseEntity<>(cantidad, Helper.cabeceraHTTP("Existen " + cantidad + " entidades con status " + status + "."), HttpStatus.OK);
+    }
+
     @GetMapping(value = "/todas")
     public ResponseEntity<List<Estudiante>> getAll() {
         List<Estudiante> estudiantes = service.findAll();
         if (estudiantes.isEmpty())
             return ResponseEntity.accepted().headers(Helper.cabeceraHTTP("Estudiante no posee entidades.")).build();
-        return new ResponseEntity<>(estudiantes, Helper.cabeceraHTTP("Existen " + estudiantes.size() + "entidades en Estudiante."), HttpStatus.OK);
+        return new ResponseEntity<>(estudiantes, Helper.cabeceraHTTP("Existen " + estudiantes.size() + " entidades en Estudiante."), HttpStatus.OK);
     }
 
     @GetMapping(value = "/buscar-por-id/{id}")

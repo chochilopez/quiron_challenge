@@ -21,6 +21,14 @@ public class CarreraController {
 
     private final CarreraServiceImplementation service;
 
+    @GetMapping(value = "/cantidad")
+    public ResponseEntity<Long> cantidad() {
+        Long cantidad= service.cantidad();
+        if (cantidad == 0)
+            return ResponseEntity.accepted().headers(Helper.cabeceraHTTP("Hay 0 entidades en Carrera.")).build();
+        return new ResponseEntity<>(cantidad, Helper.cabeceraHTTP("Existen " + cantidad + " en Carrera."), HttpStatus.OK);
+    }
+
     @GetMapping(value = "/todas")
     public ResponseEntity<List<Carrera>> getAll() {
         List<Carrera> carreras = service.findAll();
@@ -49,7 +57,7 @@ public class CarreraController {
                     "Fallo al intentar persistir el objeto Carrera."
             )).build();
         } else {
-            return new ResponseEntity<>(carrera, Helper.cabeceraHTTP("Se persistió correctamente la entidad Carrera con id: " + carrera.getId() + "."), HttpStatus.CREATED);
+            return new ResponseEntity<>(carrera, Helper.cabeceraHTTP("Se persistió correctamente la entidad Carrera."), HttpStatus.CREATED);
         }
     }
 

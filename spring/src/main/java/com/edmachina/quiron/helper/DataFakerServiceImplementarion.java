@@ -1,11 +1,12 @@
 package com.edmachina.quiron.helper;
 
 import com.edmachina.quiron.model.*;
+import com.edmachina.quiron.model.enumerator.EnumEstadoEstudiante;
+import com.edmachina.quiron.model.enumerator.EnumEstadoMateria;
 import com.edmachina.quiron.model.enumerator.EnumTituloGrado;
-import com.edmachina.quiron.repository.CarreraRepository;
-import com.edmachina.quiron.repository.EstudianteRepository;
-import com.edmachina.quiron.repository.MateriaRepository;
-import com.edmachina.quiron.service.implementation.*;
+import com.edmachina.quiron.repository.*;
+import com.edmachina.quiron.service.implementation.EstudianteCarreraServiceImplementation;
+import com.edmachina.quiron.service.implementation.EstudianteMateriaServiceImplementation;
 import com.github.javafaker.Faker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ public class DataFakerServiceImplementarion {
     private final MateriaRepository materiaRepository;
     private final CarreraRepository carreraRepository;
     private final EstudianteRepository estudianteRepository;
+    private final EstudianteCarreraServiceImplementation estudianteCarreraServiceImplementation;
 
     private final Faker faker = new Faker(new Locale("es"));
 
@@ -48,17 +50,15 @@ public class DataFakerServiceImplementarion {
                 Set<Materia> materias = new HashSet<>();
                 for (int b = 0; b < 40; b++) {
                     Optional<Materia> materia = materiaRepository.findById(contador);
-                    if (materia.isPresent()) {
-                        materias.add(materia.get());
-                    }
+                    materia.ifPresent(materias::add);
                     contador ++;
                 }
                 Carrera carrera = new Carrera(
                         faker.educator().course(),
                         EnumTituloGrado.valueOf(a % 3 == 0 ? "TITULO_PREGRADO" : a % 3 == 1 ? "TITULO_GRADO" : "TITULO_POSTGRADO"),
-                        materias,
-                        Helper.getHoy(),
-                        null);
+                        materias
+
+                );
                 carreras.add(carrera);
             }
             return carreraRepository.saveAll(carreras);
@@ -71,21 +71,40 @@ public class DataFakerServiceImplementarion {
     public List<Estudiante> generar10000Estudiantes() {
         try {
             List<Estudiante> estudiantes = new ArrayList<>();
-            for (int a = 0; a < 1; a++) {
-                Set<Carrera> carreras = new HashSet<>();
-                Optional<Carrera> carrera = carreraRepository.findById((long)faker.number().numberBetween(0, 20));
-                carreras.add(carrera.get());
+            for (int a = 0; a < 1000; a++) {
                 Estudiante estudiante = new Estudiante(
                         faker.name().firstName(),
                         faker.name().lastName(),
                         faker.internet().emailAddress(),
                         faker.address().fullAddress(),
                         faker.phoneNumber().cellPhone(),
-                        carreras
+                        EnumEstadoEstudiante.ESTADO_LEAD,
+                        Helper.getHoy(),
+                        null
                 );
                 estudiantes.add(estudiante);
             }
             return estudianteRepository.saveAll(estudiantes);
+        } catch (Exception e) {
+            log.error("Hubo un error al generar datos, exepcion: {}.", e.getMessage());
+            return null;
+        }
+    }
+
+    public List<EstudianteCarrera> inscribir300Estudiantes() {
+        try {
+            List<EstudianteCarrera> estudianteCarreras = new ArrayList<>();
+            for (int a = 0; a < 300; a++) {
+                Optional<Estudiante> estudiante=estudianteRepository.findById((long)faker.number().numberBetween(0, 999));
+                Optional<Carrera> carrera=carreraRepository.findById((long)faker.number().numberBetween(0, 19));
+                if (estudiante.isPresent() && carrera.isPresent()) {
+                    EstudianteCarrera inscripto = estudianteCarreraServiceImplementation.inscribirEstudiante(estudiante.get().getId(), carrera.get().getId());
+                    if (inscripto != null) {
+                        estudianteCarreras.add(inscripto);
+                    }
+                }
+            }
+            return estudianteCarreras;
         } catch (Exception e) {
             log.error("Hubo un error al generar datos, exepcion: {}.", e.getMessage());
             return null;

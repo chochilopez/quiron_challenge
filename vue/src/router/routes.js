@@ -1,18 +1,38 @@
-
 const routes = [
   {
     path: '/',
-    component: () => import('layouts/MainLayout.vue'),
+    component: () => import('layouts/PanelLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/IndexPage.vue') }
+      {
+        path: '',
+        name: 'Dashboard',
+        component: () => import('pages/panel/Dashboard.vue')
+      },
+      {
+        path: '/dashboard/estudiante',
+        name: 'Estudiante',
+        component: () => import('pages/panel/Estudiante.vue')
+      },
+      {
+        path: '/dashboard/carrera',
+        name: 'Carrera',
+        component: () => import('pages/panel/Carrera.vue')
+      },
+      {
+        path: '/dashboard/lead',
+        name: 'Lead',
+        component: () => import('pages/panel/Lead.vue')
+      },
+      {
+        path: '/dashboard/materias',
+        name: 'Materia',
+        component: () => import('pages/panel/Materia.vue')
+      }
     ]
   },
-
-  // Always leave this as last one,
-  // but you can also remove it
   {
     path: '/:catchAll(.*)*',
-    component: () => import('pages/ErrorNotFound.vue')
+    component: () => import('pages/Error404.vue')
   }
 ]
 
