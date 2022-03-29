@@ -1,0 +1,15 @@
+
+version: '3.8'
+services:
+  backend:
+    build: .
+    ports:
+      - "9088:9088"
+    volumes:
+      - .:/home/backend/quiron:rw
+    restart: "no"
+    command: sh
+    stdin_open: true
+    tty: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
