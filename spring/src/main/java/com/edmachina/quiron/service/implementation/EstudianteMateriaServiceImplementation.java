@@ -125,7 +125,7 @@ public class EstudianteMateriaServiceImplementation implements EstudianteMateria
         if (estudianteMaterias.isEmpty()) {
             log.info("La tabla no posee entidades EstudianteMateria.");
         } else {
-            log.info("Se encontraron {} entidades EstudianteMateria, incluidas las borradas.", estudianteMaterias.size());
+            log.info("Se encontraron {} entidades EstudianteMateria.", estudianteMaterias.size());
         }
         return estudianteMaterias;
     }

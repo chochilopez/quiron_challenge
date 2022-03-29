@@ -1,5 +1,5 @@
 <template>
-  <q-card class="q-ma-md fuente5">
+  <q-card class="q-ma-md fuente8">
     <div class="row" >
       <div class="col">
         <div class="row justify-around" v-if="cantidadLeads == 0">
@@ -21,7 +21,7 @@
               </q-card-actions>
 
               <q-card-actions align="center" class="bg-c-6 justify-around" style="filter: opacity(0.9);">
-                <q-btn flat round icon="add_circle" :to="{ name: 'Lead'}" />
+                <q-btn flat round icon="fas fa-sign-in-alt" :to="{ name: 'Lead'}" />
               </q-card-actions>
             </q-card>
           </div>
@@ -69,12 +69,12 @@
               </q-card-actions>
 
               <q-card-actions align="center" class="bg-c-7">
-                <q-icon name="mdi-account-search" size="md" />
+                <q-icon name="mdi-book-open-page-variant" size="md" />
                 <span class="text-h4 q-ml-md">{{ cantidadMaterias }}</span>
               </q-card-actions>
 
               <q-card-actions align="center" class="bg-c-7 justify-around" style="filter: opacity(0.9);">
-                <q-btn flat round icon="mdi-book-open-page-variant" :to="{ name: 'Materia'}" />
+                <q-btn flat round icon="fas fa-sign-in-alt" :to="{ name: 'Materia'}" />
               </q-card-actions>
             </q-card>
           </div>

@@ -114,7 +114,7 @@ public class EstudianteCarreraServiceImplementation implements EstudianteCarrera
         if (estudianteCarreras.isEmpty()) {
             log.info("La tabla no posee entidades EstudianteCarrera.");
         } else {
-            log.info("Se encontraron {} entidades EstudianteCarrera, incluidas las borradas.", estudianteCarreras.size());
+            log.info("Se encontraron {} entidades EstudianteCarrera.", estudianteCarreras.size());
         }
         return estudianteCarreras;
     }

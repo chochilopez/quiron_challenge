@@ -10,6 +10,8 @@ public interface EstudianteServiceInterfase {
 
     Long countByStatus(String status);
 
+    List<Estudiante> findAllByStatus(String status);
+
     Optional<Estudiante> findById(Long id);
     List<Estudiante> findAll();
     Estudiante insert(Estudiante obj) throws Exception;

@@ -5,9 +5,11 @@ import com.edmachina.quiron.model.Estudiante;
 import com.edmachina.quiron.model.EstudianteMateria;
 import com.edmachina.quiron.model.Materia;
 import com.edmachina.quiron.model.enumerator.EnumEstadoMateria;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.Getter;
 import java.util.Date;
 
+@Hidden
 @Getter
 public class EstudianteMateriaForm {
 

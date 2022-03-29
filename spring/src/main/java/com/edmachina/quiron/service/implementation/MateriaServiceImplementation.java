@@ -43,7 +43,7 @@ public class MateriaServiceImplementation implements MateriaServiceInterfase {
         if (materias.isEmpty()) {
             log.info("La tabla no posee entidades Materia.");
         } else {
-            log.info("Se encontraron {} entidades Materia, incluidas las borradas.", materias.size());
+            log.info("Se encontraron {} entidades Materia.", materias.size());
         }
         return materias;
     }

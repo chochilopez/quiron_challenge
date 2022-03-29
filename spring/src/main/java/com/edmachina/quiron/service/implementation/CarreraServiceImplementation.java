@@ -43,7 +43,7 @@ public class CarreraServiceImplementation implements CarreraServiceInterfase {
         if (carreras.isEmpty()) {
             log.info("La tabla no posee entidades Carrera.");
         } else {
-            log.info("Se encontraron {} entidades Carrera, incluidas las borradas.", carreras.size());
+            log.info("Se encontraron {} entidades Carrera.", carreras.size());
         }
         return carreras;
     }

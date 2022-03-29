@@ -1,7 +1,7 @@
 <template>
   <q-layout view="hHh lpR fFf">
 
-    <q-header class="bg-c-1 text-white fuente1">
+    <q-header class="bg-c-1 text-white fuente3">
       <q-toolbar>
         <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
         <q-toolbar-title>
@@ -29,43 +29,19 @@
       <q-img src="../assets/images/baner.jpeg" height="200px" fit="contain" />
     </q-footer>
 
-    <q-drawer show-if-above v-model="leftDrawerOpen" side="left" class="bg-primary text-white fuente4">
+    <q-drawer show-if-above v-model="leftDrawerOpen" side="left" class="bg-primary text-white fuente6">
       <q-list bordered padding class="text-primary">
 
-        <q-item clickable v-ripple :active="link === 'dashboard'" @click="link = 'dashboard'" active-class="my-menu-link" exact :to="{ name: 'Dashboard' }" >
-          <q-item-section avatar>
-            <q-icon name="dashboard" />
-          </q-item-section>
-          <q-item-section class="white-text">Panel Principal</q-item-section>
-        </q-item>
-
-        <q-item clickable v-ripple :active="link === 'carrera'" @click="link = 'carrera'" active-class="my-menu-link" exact :to="{ name: 'Carrera' }" >
-          <q-item-section avatar>
-            <q-icon name="mdi-school" />
-          </q-item-section>
-          <q-item-section>Carrera</q-item-section>
-        </q-item>
-
-        <q-item clickable v-ripple :active="link === 'estudiante'" @click="link = 'estudiante'" active-class="my-menu-link" exact :to="{ name: 'Estudiante' }" >
-          <q-item-section avatar>
-            <q-icon name="mdi-account-group" />
-          </q-item-section>
-          <q-item-section>Estudiante</q-item-section>
-        </q-item>
-
-        <q-item clickable v-ripple :active="link === 'lead'" @click="link = 'lead'" active-class="my-menu-link" exact :to="{ name: 'Lead' }" >
-          <q-item-section avatar>
-            <q-icon name="mdi-account-convert" />
-          </q-item-section>
-          <q-item-section>Lead</q-item-section>
-        </q-item>
-
-        <q-item clickable v-ripple :active="link === 'materia'" @click="link = 'materia'" active-class="my-menu-link" exact :to="{ name: 'Materia' }" >
-          <q-item-section avatar>
-            <q-icon name="mdi-book-open-page-variant" />
-          </q-item-section>
-          <q-item-section>Materia</q-item-section>
-        </q-item>
+        <q-tree :nodes="menuTree" node-key="label" selected-color="warning" v-model:selected="selected" accordion  >
+          <template v-slot:default-header="prop">
+            <q-item class="rounded-borders" clickable v-ripple :active="link === prop.node.body" @click="link = prop.node.body" active-class="my-menu-link" exact :to="{ name: prop.node.label }" >
+              <q-item-section avatar>
+                <q-icon :name="prop.node.icon" />
+              </q-item-section>
+              <q-item-section class="white-text">{{ prop.node.label }}</q-item-section>
+            </q-item>
+          </template>
+        </q-tree>
 
       </q-list>
     </q-drawer>
@@ -86,6 +62,7 @@ export default {
     const leftDrawerOpen = ref(false)
     const link = ref('dashboard')
     const nombreUsuario = 'invitado@invitado'
+    const selected = ref('Food')
     const cerrar = () => {
       servicioAlertas.alertaExito('De estar logueado, te hubieses deslogueado exitosamente!')
     }
@@ -98,7 +75,72 @@ export default {
       layout,
       toggleLeftDrawer () {
         leftDrawerOpen.value = !leftDrawerOpen.value
-      }
+      },
+      selected,
+      menuTree: [
+        {
+          label: 'Dashboard',
+          icon: 'mdi-view-dashboard',
+          body: 'dashboard',
+          header: 'generic'
+        },
+        {
+          label: 'Carreras',
+          icon: 'mdi-school',
+          header: 'generic',
+          body: 'carreras',
+          children: [
+            {
+              label: 'Carrera',
+              icon: 'mdi-school',
+              header: 'generic',
+              body: 'carrera'
+            }
+          ]
+        },
+        {
+          label: 'Estudiantes',
+          icon: 'mdi-account-group',
+          header: 'generic',
+          body: 'estudiantes',
+          children: [
+            {
+              label: 'Estudiante',
+              icon: 'mdi-account-group',
+              header: 'generic',
+              body: 'estudiante'
+            }
+          ]
+        },
+        {
+          label: 'Leads',
+          icon: 'mdi-account-convert',
+          header: 'generic',
+          body: 'leads',
+          children: [
+            {
+              label: 'Lead',
+              icon: 'mdi-account-convert',
+              header: 'generic',
+              body: 'lead'
+            }
+          ]
+        },
+        {
+          label: 'Materias',
+          icon: 'mdi-book-open-page-variant',
+          header: 'generic',
+          body: 'materias',
+          children: [
+            {
+              label: 'Materia',
+              icon: 'mdi-book-open-page-variant',
+              header: 'generic',
+              body: 'materia'
+            }
+          ]
+        }
+      ]
     }
   }
 }
@@ -108,6 +150,9 @@ export default {
 .my-menu-link {
   color: white !important;
   background-color: #6254fd;
+}
+.q-item {
+  width: 100%;
 }
 a {
   color: white !important;

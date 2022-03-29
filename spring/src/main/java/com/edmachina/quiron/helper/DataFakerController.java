@@ -4,6 +4,7 @@ import com.edmachina.quiron.model.Carrera;
 import com.edmachina.quiron.model.Estudiante;
 import com.edmachina.quiron.model.EstudianteCarrera;
 import com.edmachina.quiron.model.Materia;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Hidden
 @CrossOrigin(origins = "*")
 @RequestMapping(value = "/api/faker")
 @RequiredArgsConstructor

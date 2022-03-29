@@ -3,9 +3,11 @@ package com.edmachina.quiron.controller.form;
 import com.edmachina.quiron.model.Carrera;
 import com.edmachina.quiron.model.Estudiante;
 import com.edmachina.quiron.model.EstudianteCarrera;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.Getter;
 import java.util.Date;
 
+@Hidden
 @Getter
 public class EstudianteCarreraForm {
 

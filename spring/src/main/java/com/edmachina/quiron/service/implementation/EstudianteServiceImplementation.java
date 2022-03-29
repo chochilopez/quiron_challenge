@@ -21,6 +21,18 @@ public class EstudianteServiceImplementation implements EstudianteServiceInterfa
     private final EstudianteRepository repositorio;
 
     @Override
+    public List<Estudiante> findAllByStatus(String status) {
+        log.info("Buscando todas las entidades con status {}.", status);
+        List<Estudiante> estudiantes = repositorio.findAllByStatus(EnumEstadoEstudiante.valueOf(status));
+        if (estudiantes.isEmpty()) {
+            log.info("La tabla no posee entidades Estudiante con status {}.", status);
+        } else {
+            log.info("Se encontraron {} entidades Estudiante con status {}.", estudiantes.size(), status);
+        }
+        return estudiantes;
+    }
+
+    @Override
     public Long cantidad() {
         Long cuenta = repositorio.count();
         log.info("Existen {} entidades en Estudiante.", cuenta);
@@ -53,7 +65,7 @@ public class EstudianteServiceImplementation implements EstudianteServiceInterfa
         if (estudiantes.isEmpty()) {
             log.info("La tabla no posee entidades Estudiante.");
         } else {
-            log.info("Se encontraron {} entidades Estudiante, incluidas las borradas.", estudiantes.size());
+            log.info("Se encontraron {} entidades Estudiante.", estudiantes.size());
         }
         return estudiantes;
     }

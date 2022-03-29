@@ -1,16 +1,16 @@
 <template>
   <div class="row">
     <div class="col">
-      <Materias />
+      <Carreras />
     </div>
   </div>
 </template>
 
 <script>
-import Materias from 'src/components/panel/Materias.vue'
+import Carreras from 'src/components/panel/Carreras.vue'
 export default {
   components: {
-    Materias
+    Carreras
   },
   setup () {
     return {}
