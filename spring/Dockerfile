@@ -1,9 +1,22 @@
-FROM openjdk:11
+FROM openjdk:11 as mysqldoc
+EXPOSE 9088
+WORKDIR /app
 
-USER backend
+# Copy maven executable to the image
+COPY mvnw .
+COPY .mvn .mvn
 
-RUN mkdir /home/backend/quiron
-WORKDIR /home/backend/quiron
+# Copy the pom.xml file
+COPY pom.xml .
 
-COPY /home/mmuni/GIT/quiron_challenge/spring/out/artifacts/quiron_jar /home/backend/quiron
-ENTRYPOINT ["java","-jar","/home/backend/quiron/quiron.jar"]
+# Copy the project source
+COPY ./src ./src
+COPY ./pom.xml ./pom.xml
+
+RUN chmod 755 /app/mvnw
+
+RUN ./mvnw dependency:go-offline -B
+
+RUN ./mvnw package -DskipTests
+RUN ls -al
+ENTRYPOINT ["java","-jar","target/quiron-0.0.1-SNAPSHOT.jar"]

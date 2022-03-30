@@ -1,15 +1,36 @@
+version: '3'
 
-version: '3.8'
 services:
-  backend:
-    build: .
-    ports:
-      - "9088:9088"
-    volumes:
-      - .:/home/backend/quiron:rw
-    restart: "no"
-    command: sh
-    stdin_open: true
-    tty: true
+
+  myapp-mysql:
+    image: mysql:8.0
     environment:
-      - CHOKIDAR_USEPOLLING=true
+      - MYSQL_ROOT_PASSWORD=mysql
+      - MYSQL_DATABASE=test
+      - MYSQL_USER=queiron
+      - MYSQL_PASSWORD=Lfjk4583!
+    ports:
+      - 3306:3306
+    volumes:
+      - /var/lib/mysql:/var/lib/mysql
+    networks:
+      - quiron_challenge
+      
+  myapp-main:
+    image: challenge/quiron_back
+    networks:
+      - quiron_challenge
+    restart: on-failure
+    depends_on:
+      - myapp-mysql
+    ports:
+      - 9088:9088
+    environment:
+      - DATABASE_HOST=myapp-mysql
+      - DATABASE_USER=queiron
+      - DATABASE_PASSWORD=Lfjk4583!
+      - DATABASE_NAME=cronida
+      - DATABASE_PORT=3306
+   
+networks:
+  quiron_challenge:
