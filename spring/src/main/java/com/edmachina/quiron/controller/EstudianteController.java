@@ -27,6 +27,28 @@ public class EstudianteController {
     private final EstudianteServiceImplementation service;
 
     @Operation(
+            summary = "findByIdAndStatus - Buscar entidad por id y por estado de estudiante.",
+            description = "Busca una entidad por su identificador único y el estado del estudiante (LEAD - ESTUDIANTE)."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK Endpoint consumido correctamente, 1 ocurrencia. Mas info en campo estado en el header."),
+            @ApiResponse(responseCode = "202", description = "ACCEPTED Endpoint consumido correctamente, 0 ocurrencias. Mas info en campo estado en el header.")
+    })
+    @GetMapping(value = "/buscar-por-id-y-estado/{id}/{status}")
+    public ResponseEntity<Estudiante> findByIdAndStatus(
+            @Parameter(description = "Valor númerico de tipo Long corrspondiente al id de la entidad.", required = true, example = "4")
+            @PathVariable(name = "id") @javax.validation.constraints.Size(min = 1, max = 10) Long id,
+            @Parameter(description = "Cadena correspondiente al estado del estudiante (LEAD - ESTUDIANTE).", required = true, example = "4")
+            @PathVariable(name = "status") @javax.validation.constraints.Size(min = 6, max = 20) String status
+    ) {
+        Optional<Estudiante> estudiante = service.findByIdAndStatus(id, status);
+        if (estudiante.isPresent())
+            return new ResponseEntity<>(estudiante.get(), Helper.cabeceraHTTP("Se encontró la entidad Estudiante con id: " + id + "."), HttpStatus.OK);
+        else
+            return ResponseEntity.accepted().headers(Helper.cabeceraHTTP("Estudiante no posee entidades con id: " + id + ".")).build();
+    }
+
+    @Operation(
             summary = "findAllByStatus - Busca todas las entidades por EstadoEstudiante.",
             description = "Devuelve un listado con todas las entidades estudiantes que correspondan al estado ingresado."
     )
@@ -154,7 +176,7 @@ public class EstudianteController {
         if (objeto.isEmpty()) {
             return ResponseEntity.accepted().headers(Helper.cabeceraHTTP("No existe una entidad Estudiante modificable con id: " + id + ".")).build();
         }
-        Estudiante entidad = service.update(EstudianteForm.formEstudianteDTO(new Estudiante()));
+        Estudiante entidad = service.update(EstudianteForm.formEstudianteDTO(objeto.get()));
         return new ResponseEntity<>(entidad, Helper.cabeceraHTTP("Se modificó y persistió correctamente la entidad Estudiante con id: " + id + "."), HttpStatus.CREATED);
     }
 

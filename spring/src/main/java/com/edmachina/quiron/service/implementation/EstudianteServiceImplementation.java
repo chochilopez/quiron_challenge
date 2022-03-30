@@ -21,6 +21,18 @@ public class EstudianteServiceImplementation implements EstudianteServiceInterfa
     private final EstudianteRepository repositorio;
 
     @Override
+    public Optional<Estudiante> findByIdAndStatus(Long id, String status) {
+        log.info("Buscando la entidad Estudiante con id: {} y estado {}.", id, status);
+        Optional<Estudiante> estudiante = repositorio.findByIdAndStatus(id, EnumEstadoEstudiante.valueOf(status));
+        if (estudiante.isEmpty()) {
+            log.info("No existe la entidad Estudiante con id: {} y estado {}.", id, status);
+        } else {
+            log.info("Se encontró la entidad Estudiante: {}.", estudiante);
+        }
+        return estudiante;
+    }
+
+    @Override
     public List<Estudiante> findAllByStatus(String status) {
         log.info("Buscando todas las entidades con status {}.", status);
         List<Estudiante> estudiantes = repositorio.findAllByStatus(EnumEstadoEstudiante.valueOf(status));

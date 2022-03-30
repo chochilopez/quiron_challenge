@@ -2,10 +2,14 @@ import axios from 'axios'
 
 export default {
   state: {
+    accionEstudiante: null,
     carrera: null,
     carreras: null
   },
   mutations: {
+    setAccionEstudiante (state, accionEstudiante) {
+      state.accionEstudiante = accionEstudiante
+    },
     setCarrera (state, carrera) {
       state.carrera = carrera
     },
@@ -69,7 +73,6 @@ export default {
           })
       })
     },
-
     getCarreraPorId ({ commit, rootState }, id) {
       return new Promise((resolve, reject) => {
         axios
@@ -78,6 +81,30 @@ export default {
             if (result.status === 200) {
               commit('setCarrera', result.data)
             }
+            resolve(result)
+          })
+          .catch((error) => {
+            reject(error)
+          })
+      })
+    },
+    delMateriaDeCarrera ({ rootState }, objeto) {
+      return new Promise((resolve, reject) => {
+        axios
+          .post('http://localhost:9088/api/carrera/quitar-materia/' + objeto.idCarrera + '/' + objeto.idMateria)
+          .then((result) => {
+            resolve(result)
+          })
+          .catch((error) => {
+            reject(error)
+          })
+      })
+    },
+    agregarMateriaACarrera ({ rootState }, objeto) {
+      return new Promise((resolve, reject) => {
+        axios
+          .post('http://localhost:9088/api/carrera/agregar-materia/' + objeto.idCarrera + '/' + objeto.idMateria)
+          .then((result) => {
             resolve(result)
           })
           .catch((error) => {

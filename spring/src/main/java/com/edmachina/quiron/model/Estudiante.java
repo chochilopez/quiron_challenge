@@ -50,5 +50,17 @@ public class Estudiante {
         this.ingresoLead = ingresoLead;
         this.ingresoEstudiante = ingresoEstudiante;
     }
+
+    public Estudiante(Long id, String nombre, String apellido, String email, String direccion, String telefono, EnumEstadoEstudiante status, Date ingresoLead, Date ingresoEstudiante) {
+        this.id = id;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.email = email;
+        this.direccion = direccion;
+        this.telefono = telefono;
+        this.status = status;
+        this.ingresoLead = ingresoLead;
+        this.ingresoEstudiante = ingresoEstudiante;
+    }
 }
 

@@ -2,138 +2,138 @@
   <div class="row q-pa-md fuente3">
     <div class="col">
       <q-table
-        :showing="!cargando"
+        :showing="!letCargando"
         bordered
         title="Estudiantes"
-        :columns="columnas"
+        :columns="constColumnas"
         rows-per-page-label="Registros por pagina"
         no-data-label="Sin datos para mostrar"
-        :pagination="paginacion"
-        :filter="filter"
+        :pagination="constPaginacion"
+        :filter="letFilter"
         hide-no-data
-        :rows="estudiantes"
+        :rows="letEstudiantes"
         row-key="name"
       >
         <template v-slot:top-right>
-          <q-input outlined dense debounce="300" v-model="filter" placeholder="Buscar">
+          <q-input outlined dense debounce="300" v-model="letFilter" placeholder="Buscar" class="q-ma-md">
             <template v-slot:append>
               <q-icon name="search" />
             </template>
           </q-input>
           <q-btn
-            class="q-ml-md bg-c-4 text-black"
-            icon-right="add_box"
-            label="Nueva estudiante"
-            no-caps
-            @click="crear" />
-          <q-btn
-            class="q-ml-md bg-c-5 text-black"
+            class="q-ma-md bg-c-5 text-black"
             icon-right="archive"
             label="Exportar"
             no-caps
             @click="exportTable" />
+          <q-btn
+            class="q-ma-md bg-info text-black"
+            icon-right="mdi-magnify"
+            label="Buscar por id"
+            no-caps
+            @click="functionAccionBuscarPorId" />
         </template>
-        <template v-slot:body-cell-imagen="icons">
-          <q-td :props="icons">
-            <q-icon :name="icons.row.icono" size="md"></q-icon>
+        <template v-slot:body-cell-ingresoEstudiante="props">
+          <q-td :props="props">
+            {{ functionFormatoFecha(props.row.ingresoEstudiante) }}
           </q-td>
         </template>
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
-            <q-btn @click="ver(props)" dense round flat class="text-c-1" icon="visibility">
-              <q-tooltip anchor="top middle" self="bottom middle" :offset="[3, 3]">
+            <q-btn @click="functionAccionVer(props)" dense round flat class="text-c-1" icon="visibility">
+              <q-tooltip anchor="top middle" self="bottom middle" :offset="[3, 3]" class="bg-c-1">
                 Ver
               </q-tooltip>
             </q-btn>
-            <q-btn @click="editar(props)" dense round flat class="text-c-4" icon="edit">
-              <q-tooltip anchor="top middle" self="bottom middle" :offset="[3, 3]">
+            <q-btn @click="functionAccionEditar(props)" dense round flat class="text-c-4" icon="edit">
+              <q-tooltip anchor="top middle" self="bottom middle" :offset="[3, 3]" class="bg-c-1">
                 Editar
               </q-tooltip>
             </q-btn>
-            <q-btn @click="eliminar(props)" dense round flat class="text-c-6" icon="delete">
-              <q-tooltip anchor="top middle" self="bottom middle" :offset="[3, 3]">
+            <q-btn @click="functionAccionEliminar(props)" dense round flat class="text-c-6" icon="delete">
+              <q-tooltip anchor="top middle" self="bottom middle" :offset="[3, 3]" class="bg-c-1">
                 Eliminar
               </q-tooltip>
             </q-btn>
           </q-td>
         </template>
       </q-table>
-      <q-inner-loading :showing="cargando">
+      <q-inner-loading :showing="letCargando">
         <q-spinner-puff class="text-c-1" size="6em" />
       </q-inner-loading>
     </div>
   </div>
 
-  <q-dialog v-model="dialogoVer" persistent transition-show="scale" transition-hide="scale">
+  <q-dialog v-model="dialogoEliminar" persistent transition-show="scale" transition-hide="scale">
     <q-card class="text-white">
-      <q-bar class="bg-c-5 text-black">
-        <div>Ver estudiante</div>
+      <q-bar class="bg-c-6">
+        <div>Eliminar estudiante</div>
         <q-space />
         <q-btn dense flat icon="close" v-close-popup>
-          <q-tooltip class="bg-c-2 text-white">Cerrar</q-tooltip>
+          <q-tooltip class="bg-c-1 text-white">Cerrar</q-tooltip>
         </q-btn>
       </q-bar>
-      <q-card-section>
+      <q-card-section class="q-pa-md">
         <q-list dense bordered padding class="rounded-borders">
 
           <q-item clickable v-ripple class="q-ma-md">
             <q-item-section>
-              <q-item-label class="text-c-2">{{ estudiante.id }}</q-item-label>
+              <q-item-label class="text-black">{{ letEstudiante.id }}</q-item-label>
               <q-item-label caption>Id</q-item-label>
             </q-item-section>
           </q-item>
 
           <q-item clickable v-ripple class="q-ma-md">
             <q-item-section>
-              <q-item-label class="text-c-2">{{ estudiante.nombre === null || estudiante.nombre === '' ? 'SIN DATOS' : estudiante.nombre }}</q-item-label>
-              <q-item-label caption>Nombre</q-item-label>
+              <q-item-label class="text-black">{{ letEstudiante.titulo === null || letEstudiante.titulo === '' ? 'SIN DATOS' : letEstudiante.titulo }}</q-item-label>
+              <q-item-label caption>Titulo</q-item-label>
             </q-item-section>
           </q-item>
 
           <q-item clickable v-ripple class="q-ma-md">
             <q-item-section>
-              <q-item-label class="text-c-2">{{ estudiante.apellido === null || estudiante.apellido === '' ? 'SIN DATOS' : estudiante.apellido }}</q-item-label>
-              <q-item-label caption>Apellido</q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-item clickable v-ripple class="q-ma-md">
-            <q-item-section>
-              <q-item-label class="text-c-2">{{ estudiante.email === null || estudiante.email === '' ? 'SIN DATOS' : estudiante.email }}</q-item-label>
-              <q-item-label caption>Email</q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-item clickable v-ripple class="q-ma-md">
-            <q-item-section>
-              <q-item-label class="text-c-2">{{ estudiante.direccion === null || estudiante.direccion === '' ? 'SIN DATOS' : estudiante.direccion }}</q-item-label>
-              <q-item-label caption>Direccion</q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-item clickable v-ripple class="q-ma-md">
-            <q-item-section>
-              <q-item-label class="text-c-2">{{ estudiante.telefono === null || estudiante.telefono === '' ? 'SIN DATOS' : estudiante.telefono }}</q-item-label>
-              <q-item-label caption>Teléfono</q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-item clickable v-ripple class="q-ma-md">
-            <q-item-section>
-              <q-item-label class="text-c-2">{{ estudiante.status === null || estudiante.status === '' ? 'SIN DATOS' : estudiante.status }}</q-item-label>
-              <q-item-label caption>Estado</q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-item clickable v-ripple class="q-ma-md">
-            <q-item-section>
-              <q-item-label class="text-c-2">{{ estudiante.ingresoEstudiante === null || estudiante.ingresoEstudiante === '' ? 'SIN DATOS' : estudiante.ingresoEstudiante }}</q-item-label>
-              <q-item-label caption>Ingreso Estudiante</q-item-label>
+              <q-item-label class="text-black">{{ letEstudiante.grado === null || letEstudiante.grado === '' ? 'SIN DATOS' : letEstudiante.grado }}</q-item-label>
+              <q-item-label caption>Grado Académico</q-item-label>
             </q-item-section>
           </q-item>
 
         </q-list>
+        <div class="row justify-end">
+          <q-btn v-close-popup class="q-ma-md bg-c-7 text-white" icon-right="mdi-trash-can"  @click="asyncFunctionBorrarEstudiante" label="Eliminar" no-caps />
+        </div>
       </q-card-section>
+    </q-card>
+  </q-dialog>
+
+  <q-dialog v-model="dialogoBuscar" persistent transition-show="scale" transition-hide="scale">
+    <q-card class="text-black">
+      <q-bar class="bg-c-4">
+        <div>Buscar estudiante por id</div>
+        <q-space />
+        <q-btn dense flat icon="close" v-close-popup>
+          <q-tooltip class="bg-c-1">Cerrar</q-tooltip>
+        </q-btn>
+      </q-bar>
+      <q-form  @submit.prevent="asyncFunctionBuscarEstudiantePorIdYEstado()" ref="letFormularioId">
+        <div class="row justify-around">
+          <div class="col-6 q-pa-md">
+            <q-input
+              v-model="letEstudiante.id"
+              label="Id"
+              type="number"
+              outlined
+              :rules="[rules.required, rules.minNum, rules.maxNum]"
+              clearable>
+              <template v-slot:before>
+                <q-icon name="mdi-counter" />
+              </template>
+            </q-input>
+          </div>
+          <div class="col-6 q-pa-md">
+            <q-btn type="submit" class="q-ma-md bg-c-7 text-white" icon-right="mdi-magnify" label="Buscar por id" no-caps />
+          </div>
+        </div>
+      </q-form>
     </q-card>
   </q-dialog>
 
@@ -141,20 +141,24 @@
 
 <script>
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 import { ref, reactive } from 'vue'
 import { servicioAlertas } from 'app/_helpers/alerta'
+import Helper from 'app/_helpers/helper'
 
-const paginacion = {
-  rowsPerPage: 10,
-  sortBy: 'id',
-  descending: true
-}
-
-const columnas = [
+const constColumnas = [
   {
     name: 'id',
-    label: 'Id Carrera',
+    label: 'Id Estudiante',
     field: 'id',
+    sortable: true,
+    sortOrder: 'ad',
+    align: 'center'
+  },
+  {
+    name: 'apellido',
+    label: 'Apellido',
+    field: 'apellido',
     sortable: true,
     sortOrder: 'ad',
     align: 'left'
@@ -168,14 +172,6 @@ const columnas = [
     align: 'left'
   },
   {
-    name: 'apellido',
-    label: 'Apellido',
-    field: 'apellido',
-    sortable: true,
-    sortOrder: 'ad',
-    align: 'left'
-  },
-  {
     name: 'email',
     label: 'Email',
     field: 'email',
@@ -184,20 +180,12 @@ const columnas = [
     align: 'left'
   },
   {
-    name: 'telefono',
-    label: 'Teléfono',
-    field: 'telefono',
-    sortable: true,
-    sortOrder: 'ad',
-    align: 'left'
-  },
-  {
     name: 'ingresoEstudiante',
     label: 'Ingreso Estudiante',
-    field: 'ingresoEstudiante',
+    field: '',
     sortable: true,
     sortOrder: 'ad',
-    align: 'left'
+    align: 'center'
   },
   {
     name: 'actions',
@@ -207,13 +195,23 @@ const columnas = [
   }
 ]
 
+const constPaginacion = {
+  rowsPerPage: 10,
+  sortBy: 'id',
+  descending: true
+}
+
 export default {
   setup () {
-    const store = useStore()
-    const cargando = ref(false)
-    const estudiantes = ref([])
-    const dialogoVer = ref(false)
-    const estudiante = reactive({
+    const vueRouter = useRouter()
+    const vueStore = useStore()
+
+    const dialogoBuscar = ref(false)
+    const dialogoCrear = ref(false)
+    const dialogoEliminar = ref(false)
+
+    const letCargando = ref(false)
+    const letEstudiante = reactive({
       id: null,
       nombre: '',
       apellido: '',
@@ -223,53 +221,133 @@ export default {
       status: '',
       ingresoEstudiante: ''
     })
+    const letEstudiantes = ref([])
+    const letFilter = ref('')
+    const letFormulario = ref(null)
+    const letFormularioId = ref(null)
 
-    getLeads()
+    asyncFunctionBuscarEstudiantes()
 
-    function crear () {
-      servicioAlertas.alertaAdvertencia('Opcion no habilitada')
+    function functionAccionBuscarPorId () {
+      dialogoBuscar.value = true
     }
 
-    function ver (props) {
-      Object.assign(estudiante, props.row)
-      dialogoVer.value = true
+    function functionAccionCancelar () {
+      functionOcultar()
+      functionLimpiar()
     }
 
-    function editar (props) {
-      servicioAlertas.alertaAdvertencia('Opcion no habilitada')
+    function functionAccionCrear () {
+      functionLimpiar()
+      dialogoCrear.value = true
     }
 
-    function eliminar (props) {
-      servicioAlertas.alertaAdvertencia('Opcion no habilitada')
+    function functionAccionEditar (props) {
+      vueStore.commit('setAccionEstudiante', 'editar')
+      vueStore.commit('setEstudiante', props.row)
+      vueRouter.push({ name: 'Estudiante' })
     }
 
-    function limpiar () {
-      estudiante.id = null
-      estudiante.nombre = ''
-      estudiante.apellido = ''
-      estudiante.email = ''
-      estudiante.direccion = ''
-      estudiante.telefono = ''
-      estudiante.status = ''
-      estudiante.ingresoEstudiante = ''
+    function functionAccionEliminar (props) {
+      Object.assign(letEstudiante, props.row)
+      dialogoEliminar.value = true
     }
 
-    function ocultar () {
-      dialogoVer.value = false
+    function functionAccionVer (props) {
+      vueStore.commit('setAccionEstudiante', 'ver')
+      vueStore.commit('setEstudiante', props.row)
+      vueRouter.push({ name: 'Estudiante' })
     }
 
-    function cancelar () {
-      ocultar()
-      limpiar()
+    function functionFormatoFecha (fecha) {
+      return Helper.getFormatoFecha(fecha)
     }
 
-    async function getLeads () {
+    function functionLimpiar () {
+      letEstudiante.id = null
+      letEstudiante.nombre = ''
+      letEstudiante.apellido = ''
+      letEstudiante.email = ''
+      letEstudiante.direccion = ''
+      letEstudiante.telefono = ''
+      letEstudiante.status = ''
+      letEstudiante.ingresoEstudiante = ''
+    }
+
+    function functionOcultar () {
+      dialogoCrear.value = false
+      dialogoEliminar.value = false
+    }
+
+    async function asyncFunctionBorrarEstudiante () {
       try {
-        cargando.value = true
-        const datos = await store.dispatch('getEstudiantes')
+        letCargando.value = true
+        const result = await vueStore.dispatch('delEstudiante', letEstudiante.id)
+        if (result.status === 200) {
+          servicioAlertas.alertaExito('Estudiante eliminado correctamente')
+          const arreglo = letEstudiantes.value.filter(function (estudianteEliminado) {
+            return estudianteEliminado.id !== letEstudiante.id
+          })
+          letEstudiantes.value = [...arreglo]
+        } else if (result.status === 202) {
+          const mensaje = 'Error al eliminar ' + result.headers.estado
+          servicioAlertas.infoAdvertencia(mensaje)
+          console.warn(mensaje)
+        } else {
+          const mensaje = 'Error al eliminar ' + result.status
+          servicioAlertas.infoError(mensaje)
+          console.error(mensaje)
+        }
+        letCargando.value = false
+        functionOcultar()
+      } catch (err) {
+        letCargando.value = false
+        functionOcultar()
+        servicioAlertas.infoAdvertencia('No se puede eliminar la entidad ya que existen carreras que dependen de ella.')
+      }
+    }
+
+    async function asyncFunctionBuscarEstudiantePorIdYEstado () {
+      try {
+        letCargando.value = true
+        const objeto = {
+          id: letEstudiante.id,
+          status: 'ESTADO_ESTUDIANTE'
+        }
+        const datos = await vueStore.dispatch('getEstudiantePorIdEstado', objeto)
         if (datos.status === 200) {
-          cargando.value = false
-          estudiantes.value = await datos.data
+          letCargando.value = false
+          vueStore.commit('setEstudiante', await datos.data)
+          vueStore.commit('setAccionEstudiante', 'ver')
+          servicioAlertas.alertaExito('Se encontró la entidad Estudiante.')
+          vueRouter.push({ name: 'Estudiante' })
+        } else if (datos.status === 202) {
+          const mensaje = 'No se encontro la identidad ' + datos.headers.estado
+          servicioAlertas.infoAdvertencia(mensaje)
+          console.warn(mensaje)
+        } else {
+          const mensaje = 'Error al cargar el estudiante ' + datos.status
+          servicioAlertas.infoError(mensaje)
+          console.error(mensaje)
+        }
+        functionOcultar()
+        letCargando.value = false
+      } catch (err) {
+        letCargando.value = false
+        functionOcultar()
+        const error = 'Hubo un error al intentar buscar el estudiante ' + err
+        servicioAlertas.infoError(error)
+        console.error(error)
+      }
+    }
+
+    async function asyncFunctionBuscarEstudiantes () {
+      try {
+        letCargando.value = true
+        const datos = await vueStore.dispatch('getEstudiantes')
+        if (datos.status === 200) {
+          letCargando.value = false
+          letEstudiantes.value = await datos.data
         } else if (datos.status === 202) {
           const mensaje = 'Error al cargar estudiantes ' + datos.headers.estado
           servicioAlertas.infoAdvertencia(mensaje)
@@ -279,40 +357,85 @@ export default {
           servicioAlertas.infoError(mensaje)
           console.error(mensaje)
         }
-        ocultar()
-        cargando.value = false
+        functionOcultar()
+        letCargando.value = false
       } catch (err) {
-        cargando.value = false
-        ocultar()
-        const error = 'Hubo un error al intentar cargar las estudiantes ' + err
+        letCargando.value = false
+        functionOcultar()
+        const error = 'Hubo un error al intentar cargar los estudiantes ' + err
         servicioAlertas.infoError(error)
         console.error(error)
       }
     }
 
+    async function asyncFunctionGuardarEstudiante () {
+      if (letFormulario.value.validate()) {
+        try {
+          letCargando.value = true
+          const objeto = {
+            id: letEstudiante.id,
+            titulo: letEstudiante.titulo,
+            grado: letEstudiante.grado
+          }
+          const result = await vueStore.dispatch('saveEstudiante', objeto)
+          if (result.status === 201) {
+            servicioAlertas.alertaExito('Estudiante guardada correctamente')
+            asyncFunctionBuscarEstudiantes()
+          } else if (result.status === 202) {
+            const mensaje = 'Error al guardar ' + result.headers.estado
+            servicioAlertas.infoAdvertencia(mensaje)
+            console.warn(mensaje)
+          } else {
+            const mensaje = 'Error al guardar ' + result.status
+            servicioAlertas.infoError(mensaje)
+            console.error(mensaje)
+          }
+          letCargando.value = false
+          functionOcultar()
+        } catch (err) {
+          const mensaje = 'Error al guardar ' + err
+          servicioAlertas.infoError(mensaje)
+          console.error(mensaje)
+          letCargando.value = false
+          functionOcultar()
+        }
+      } else {
+        servicioAlertas.alertaError('Formulario no validado')
+      }
+    }
+
     return {
-      crear,
-      ver,
-      editar,
-      eliminar,
-      cancelar,
+      asyncFunctionBorrarEstudiante,
+      asyncFunctionBuscarEstudiantePorIdYEstado,
+      asyncFunctionGuardarEstudiante,
 
-      cargando,
+      functionAccionBuscarPorId,
+      functionAccionCancelar,
+      functionAccionCrear,
+      functionAccionEditar,
+      functionAccionEliminar,
+      functionAccionVer,
+      functionFormatoFecha,
 
-      estudiante,
-      estudiantes,
+      constColumnas,
+      constPaginacion,
 
-      dialogoVer,
+      letCargando,
+      letEstudiante,
+      letEstudiantes,
+      letFilter,
+      letFormulario,
+      letFormularioId,
 
-      paginacion,
-      columnas,
+      dialogoBuscar,
+      dialogoCrear,
+      dialogoEliminar,
 
-      filter: ref(''),
       exportTable () {
         let csvContent = 'data:text/csv;charset=utf-8,'
         csvContent += [
-          Object.keys(estudiantes.value[0]).join(';'),
-          ...estudiantes.value.map(item => Object.values(item).join(';'))
+          Object.keys(letEstudiantes.value[0]).join(';'),
+          ...letEstudiantes.value.map(item => Object.values(item).join(';'))
         ]
           .join('\n')
           .replace(/(^\[)|(\]$)/gm, '')
@@ -322,6 +445,14 @@ export default {
         link.setAttribute('href', data)
         link.setAttribute('download', 'estudiantes.csv')
         link.click()
+      },
+
+      rules: {
+        required: (v) => !!v || 'Debés completar el campo',
+        min: (v) => v.length >= 3 || 'Al menos 3 carácteres',
+        max: (v) => v.length <= 50 || 'Máximo 50 carácteres',
+        minNum: (v) => v.length >= 1 || 'Al menos 1 carácteres',
+        maxNum: (v) => v.length <= 7 || 'Cómo máximo 7 carácteres'
       }
     }
   }

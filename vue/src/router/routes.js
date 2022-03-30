@@ -39,11 +39,6 @@ const routes = [
         component: () => import('src/pages/panel/Leads.vue')
       },
       {
-        path: '/dashboard/materia',
-        name: 'Materia',
-        component: () => import('src/pages/panel/Materia.vue')
-      },
-      {
         path: '/dashboard/materias',
         name: 'Materias',
         component: () => import('src/pages/panel/Materias.vue')

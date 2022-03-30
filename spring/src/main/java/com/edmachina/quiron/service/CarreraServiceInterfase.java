@@ -7,6 +7,9 @@ import java.util.Optional;
 
 public interface CarreraServiceInterfase {
 
+    Carrera quitarMateria(Long idCarrera, Long idMateria) throws Exception;
+    Carrera agregarMateria(Long idCarrera, Long idMateria) throws Exception;
+
     Optional<Carrera> findById(Long id);
     List<Carrera> findAll();
     Carrera insert(Carrera obj) throws Exception;

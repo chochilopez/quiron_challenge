@@ -6,10 +6,8 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.Date;
 
-@AllArgsConstructor
 @Getter
 @Entity
-@NoArgsConstructor
 @Schema(description = "Modelo de entidad de tipo pivot. Relacion (ManyToMany) entre estudiantes y materias. Un estudiante puede inscribirse en multiples materias y una materia puede ser accecida por multiples estudiantes.")
 @Setter
 public class EstudianteMateria {
@@ -48,7 +46,21 @@ public class EstudianteMateria {
     @Schema(description = "Fin del ciclo de cursado de una materia.", type="Date")
     private Date finCursado;
 
+    public EstudianteMateria() {
+    }
+
     public EstudianteMateria(Estudiante estudiante, Materia materia, Carrera carrera, EnumEstadoMateria estado, Integer cursada, Date inicioCursado, Date finCursado) {
+        this.estudiante = estudiante;
+        this.materia = materia;
+        this.carrera = carrera;
+        this.estado = estado;
+        this.cursada = cursada;
+        this.inicioCursado = inicioCursado;
+        this.finCursado = finCursado;
+    }
+
+    public EstudianteMateria(Long id, Estudiante estudiante, Materia materia, Carrera carrera, EnumEstadoMateria estado, Integer cursada, Date inicioCursado, Date finCursado) {
+        this.id = id;
         this.estudiante = estudiante;
         this.materia = materia;
         this.carrera = carrera;

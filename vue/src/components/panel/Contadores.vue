@@ -28,16 +28,16 @@
 
           <div class="col-6 col-sm-3 col-md-2 q-pa-sm">
             <q-card class="my-card text-white">
-              <q-card-actions align="center" class="bg-c-1">
+              <q-card-actions align="center" class="bg-info">
                 <span class="text-h6">Estudiantes</span>
               </q-card-actions>
 
-              <q-card-actions align="center" class="bg-c-1">
+              <q-card-actions align="center" class="bg-info">
                 <q-icon name="mdi-account-group" size="md" />
                 <span class="text-h4 q-ml-md">{{ cantidadEstudiantes }}</span>
               </q-card-actions>
 
-              <q-card-actions align="center" class="bg-c-1 justify-around" style="filter: opacity(0.9);">
+              <q-card-actions align="center" class="bg-info justify-around" style="filter: opacity(0.9);">
                 <q-btn flat round icon="fas fa-sign-in-alt" :to="{ name: 'Estudiante'}" />
               </q-card-actions>
 
@@ -46,16 +46,16 @@
 
           <div class="col-6 col-sm-3 col-md-2 q-pa-sm">
             <q-card class="my-card text-white">
-              <q-card-actions align="center" class="bg-c-2">
+              <q-card-actions align="center" class="bg-warning">
                 <span class="text-h6">Carreras</span>
               </q-card-actions>
 
-              <q-card-actions align="center" class="bg-c-2">
+              <q-card-actions align="center" class="bg-warning">
                 <q-icon name="mdi-school" size="md" />
                 <span class="text-h4 q-ml-md">{{ cantidadCarreras }}</span>
               </q-card-actions>
 
-              <q-card-actions align="center" class="bg-c-2 justify-around" style="filter: opacity(0.9);">
+              <q-card-actions align="center" class="bg-warning justify-around" style="filter: opacity(0.9);">
                 <q-btn flat round icon="fas fa-sign-in-alt" :to="{ name: 'Carrera'}" />
               </q-card-actions>
 

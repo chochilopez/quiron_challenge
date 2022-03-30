@@ -26,7 +26,7 @@
     </q-header>
 
     <q-footer class="bg-c-1">
-      <q-img src="../assets/images/baner.jpeg" height="200px" fit="contain" />
+      <q-img src="../assets/images/baner.jpeg" height="125px" fit="contain" />
     </q-footer>
 
     <q-drawer show-if-above v-model="leftDrawerOpen" side="left" class="bg-primary text-white fuente6">
@@ -88,57 +88,25 @@ export default {
           label: 'Carreras',
           icon: 'mdi-school',
           header: 'generic',
-          body: 'carreras',
-          children: [
-            {
-              label: 'Carrera',
-              icon: 'mdi-school',
-              header: 'generic',
-              body: 'carrera'
-            }
-          ]
+          body: 'carreras'
         },
         {
           label: 'Estudiantes',
           icon: 'mdi-account-group',
           header: 'generic',
-          body: 'estudiantes',
-          children: [
-            {
-              label: 'Estudiante',
-              icon: 'mdi-account-group',
-              header: 'generic',
-              body: 'estudiante'
-            }
-          ]
+          body: 'estudiantes'
         },
         {
           label: 'Leads',
           icon: 'mdi-account-convert',
           header: 'generic',
-          body: 'leads',
-          children: [
-            {
-              label: 'Lead',
-              icon: 'mdi-account-convert',
-              header: 'generic',
-              body: 'lead'
-            }
-          ]
+          body: 'leads'
         },
         {
           label: 'Materias',
           icon: 'mdi-book-open-page-variant',
           header: 'generic',
-          body: 'materias',
-          children: [
-            {
-              label: 'Materia',
-              icon: 'mdi-book-open-page-variant',
-              header: 'generic',
-              body: 'materia'
-            }
-          ]
+          body: 'materias'
         }
       ]
     }

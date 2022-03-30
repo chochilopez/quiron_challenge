@@ -2,60 +2,61 @@
   <div class="row q-pa-md fuente3">
     <div class="col">
       <q-table
-        :showing="!cargando"
+        :showing="!letCargando"
         bordered
         title="Carreras"
-        :columns="columnas"
+        :columns="constColumnas"
         rows-per-page-label="Registros por pagina"
         no-data-label="Sin datos para mostrar"
-        :pagination="paginacion"
-        :filter="filter"
+        :pagination="constPaginacion"
+        :filter="letFilter"
         hide-no-data
-        :rows="carreras"
+        :rows="letCarreras"
         row-key="name"
       >
         <template v-slot:top-right>
-          <q-input outlined dense debounce="300" v-model="filter" placeholder="Buscar">
+          <q-input outlined dense debounce="300" v-model="letFilter" placeholder="Buscar" class="q-ma-md">
             <template v-slot:append>
               <q-icon name="search" />
             </template>
           </q-input>
           <q-btn
-            class="q-ml-md bg-c-4 text-black"
+            class="q-ma-md bg-c-4 text-black"
             icon-right="add_box"
             label="Nueva carrera"
             no-caps
-            @click="crear" />
+            @click="functionAccionCrear" />
           <q-btn
-            class="q-ml-md bg-c-5 text-black"
+            class="q-ma-md bg-c-5 text-black"
             icon-right="archive"
             label="Exportar"
             no-caps
             @click="exportTable" />
+          <q-btn
+            class="q-ma-md bg-info text-black"
+            icon-right="mdi-magnify"
+            label="Buscar por id"
+            no-caps
+            @click="functionAccionBuscarPorId" />
         </template>
         <template v-slot:body-cell-materias="props">
           <q-td :props="props">
             {{ props.row.planEstudio.length }}
           </q-td>
         </template>
-        <template v-slot:body-cell-imagen="icons">
-          <q-td :props="icons">
-            <q-icon :name="icons.row.icono" size="md"></q-icon>
-          </q-td>
-        </template>
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
-            <q-btn @click="ver(props)" dense round flat class="text-c-1" icon="visibility">
+            <q-btn @click="functionAccionVer(props)" dense round flat class="text-c-1" icon="visibility">
               <q-tooltip anchor="top middle" self="bottom middle" :offset="[3, 3]" class="bg-c-1">
                 Ver
               </q-tooltip>
             </q-btn>
-            <q-btn @click="editar(props)" dense round flat class="text-c-4" icon="edit">
+            <q-btn @click="functionAccionEditar(props)" dense round flat class="text-c-4" icon="edit">
               <q-tooltip anchor="top middle" self="bottom middle" :offset="[3, 3]" class="bg-c-1">
                 Editar
               </q-tooltip>
             </q-btn>
-            <q-btn @click="eliminar(props)" dense round flat class="text-c-6" icon="delete">
+            <q-btn @click="functionAccionEliminar(props)" dense round flat class="text-c-6" icon="delete">
               <q-tooltip anchor="top middle" self="bottom middle" :offset="[3, 3]" class="bg-c-1">
                 Eliminar
               </q-tooltip>
@@ -63,14 +64,14 @@
           </q-td>
         </template>
       </q-table>
-      <q-inner-loading :showing="cargando">
+      <q-inner-loading :showing="letCargando">
         <q-spinner-puff class="text-c-1" size="6em" />
       </q-inner-loading>
     </div>
   </div>
 
   <q-dialog v-model="dialogoCrear" persistent transition-show="scale" transition-hide="scale">
-    <q-card class="text-white text-black" style="width: 400px">
+    <q-card class="text-black" style="width: 400px">
       <q-bar class="bg-c-4">
         <div>Nueva carrera</div>
         <q-space />
@@ -79,11 +80,11 @@
         </q-btn>
       </q-bar>
       <q-card-section>
-        <q-form  @submit="guardar()" ref="formulario">
+        <q-form  @submit.prevent="asyncFunctionGuardarCarrera()" ref="letFormulario">
           <div class="row q-pa-sm">
             <div class="col-12">
               <q-input
-                v-model="carrera.titulo"
+                v-model="letCarrera.titulo"
                 type="input"
                 label="Título"
                 hint="Título de la carrera"
@@ -104,8 +105,8 @@
               <q-select
                 standout
                 outlined
-                v-model="carrera.grado"
-                :options="estados"
+                v-model="letCarrera.grado"
+                :options="constGrados"
                 option-label="nombre"
                 option-value="id"
                 label="Grado Académico"
@@ -125,7 +126,7 @@
                 Cancelar
               </span>
             </q-btn>
-            <q-btn type="submit" class="text-white bg-primary" icon="save" :loading="cargando">
+            <q-btn type="submit" class="text-white bg-primary" icon="save" :loading="letCargando">
               <template v-slot:loading>
                 <q-spinner-facebook />
               </template>
@@ -148,40 +149,67 @@
           <q-tooltip class="bg-c-1 text-white">Cerrar</q-tooltip>
         </q-btn>
       </q-bar>
-      <q-card-section class="q-pt-none">
+      <q-card-section class="q-pa-md">
         <q-list dense bordered padding class="rounded-borders">
 
           <q-item clickable v-ripple class="q-ma-md">
             <q-item-section>
-              <q-item-label class="text-black">{{ carrera.id }}</q-item-label>
+              <q-item-label class="text-black">{{ letCarrera.id }}</q-item-label>
               <q-item-label caption>Id</q-item-label>
             </q-item-section>
           </q-item>
 
           <q-item clickable v-ripple class="q-ma-md">
             <q-item-section>
-              <q-item-label class="text-black">{{ carrera.titulo === null || carrera.titulo === '' ? 'SIN DATOS' : carrera.titulo }}</q-item-label>
+              <q-item-label class="text-black">{{ letCarrera.titulo === null || letCarrera.titulo === '' ? 'SIN DATOS' : letCarrera.titulo }}</q-item-label>
               <q-item-label caption>Titulo</q-item-label>
             </q-item-section>
           </q-item>
 
           <q-item clickable v-ripple class="q-ma-md">
             <q-item-section>
-              <q-item-label class="text-black">{{ carrera.grado === null || carrera.grado === '' ? 'SIN DATOS' : carrera.grado }}</q-item-label>
+              <q-item-label class="text-black">{{ letCarrera.grado === null || letCarrera.grado === '' ? 'SIN DATOS' : letCarrera.grado }}</q-item-label>
               <q-item-label caption>Grado Académico</q-item-label>
             </q-item-section>
           </q-item>
 
         </q-list>
         <div class="row justify-end">
-          <q-btn v-close-popup stack class="text-white bg-c-1 q-ma-md" icon="mdi-trash-can" @click="borrar" :loading="cargando">
-            <template v-slot:loading>
-              <q-spinner-facebook />
-            </template>
-            BORRAR
-          </q-btn>
+          <q-btn v-close-popup class="q-ma-md bg-c-7 text-white" icon-right="mdi-trash-can"  @click="asyncFunctionBorrarCarrera" label="Eliminar" no-caps />
         </div>
       </q-card-section>
+    </q-card>
+  </q-dialog>
+
+  <q-dialog v-model="dialogoBuscar" persistent transition-show="scale" transition-hide="scale">
+    <q-card class="text-black">
+      <q-bar class="bg-c-4">
+        <div>Buscar carrera por id</div>
+        <q-space />
+        <q-btn dense flat icon="close" v-close-popup>
+          <q-tooltip class="bg-c-1">Cerrar</q-tooltip>
+        </q-btn>
+      </q-bar>
+      <q-form  @submit.prevent="asyncFunctionBuscarCarreraPorId()" ref="letFormularioId">
+        <div class="row justify-around">
+          <div class="col-6 q-pa-md">
+            <q-input
+              v-model="letCarrera.id"
+              label="Id"
+              type="number"
+              outlined
+              :rules="[rules.required, rules.minNum, rules.maxNum]"
+              clearable>
+              <template v-slot:before>
+                <q-icon name="mdi-counter" />
+              </template>
+            </q-input>
+          </div>
+          <div class="col-6 q-pa-md">
+            <q-btn type="submit" class="q-ma-md bg-c-7 text-white" icon-right="mdi-magnify" label="Buscar por id" no-caps />
+          </div>
+        </div>
+      </q-form>
     </q-card>
   </q-dialog>
 
@@ -189,17 +217,11 @@
 
 <script>
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 import { ref, reactive } from 'vue'
 import { servicioAlertas } from 'app/_helpers/alerta'
-import { useRouter } from 'vue-router'
 
-const paginacion = {
-  rowsPerPage: 10,
-  sortBy: 'id',
-  descending: true
-}
-
-const columnas = [
+const constColumnas = [
   {
     name: 'id',
     label: 'Id Carrera',
@@ -240,142 +262,149 @@ const columnas = [
   }
 ]
 
+const constGrados = [
+  { id: 0, nombre: 'TITULO_PREGRADO' },
+  { id: 1, nombre: 'TITULO_GRADO' },
+  { id: 2, nombre: 'TITULO_POSTGRADO' }
+]
+
+const constPaginacion = {
+  rowsPerPage: 10,
+  sortBy: 'id',
+  descending: true
+}
+
 export default {
   setup () {
-    const router = useRouter()
-    const store = useStore()
-    const cargando = ref(false)
-    const estados = ref([
-      { id: 1, nombre: 'TITULO_PREGRADO' },
-      { id: 2, nombre: 'TITULO_GRADO' },
-      { id: 3, nombre: 'TITULO_POSTGRADO' }
-    ])
-    const carreras = ref([])
+    const vueRouter = useRouter()
+    const vueStore = useStore()
+
+    const dialogoBuscar = ref(false)
     const dialogoCrear = ref(false)
     const dialogoEliminar = ref(false)
-    const formulario = ref(null)
-    const carrera = reactive({
+
+    const letCargando = ref(false)
+    const letCarrera = reactive({
       id: null,
       titulo: '',
       grado: '',
       planEstudio: []
     })
+    const letCarreras = ref([])
+    const letFilter = ref('')
+    const letFormulario = ref(null)
+    const letFormularioId = ref(null)
 
-    getCarreras()
+    asyncFunctionBuscarCarreras()
 
-    function crear () {
-      limpiar()
+    function functionAccionBuscarPorId () {
+      dialogoBuscar.value = true
+    }
+
+    function functionAccionCancelar () {
+      functionOcultar()
+      functionLimpiar()
+    }
+
+    function functionAccionCrear () {
+      functionLimpiar()
       dialogoCrear.value = true
     }
 
-    function ver (props) {
-      store.commit('setCarrera', props.row)
-      router.push({ name: 'Carrera' })
+    function functionAccionEditar (props) {
+      vueStore.commit('setAccionCarrera', 'editar')
+      vueStore.commit('setCarrera', props.row)
+      vueRouter.push({ name: 'Carrera' })
     }
 
-    function editar (props) {
-      store.commit('setCarrera', props.row)
-      router.push({ name: 'Carrera' })
-    }
-
-    function eliminar (props) {
-      Object.assign(carrera, props.row)
+    function functionAccionEliminar (props) {
+      Object.assign(letCarrera, props.row)
       dialogoEliminar.value = true
     }
 
-    function limpiar () {
-      carrera.id = null
-      carrera.titulo = ''
-      carrera.grado = ''
-      carrera.planEstudio = []
+    function functionLimpiar () {
+      letCarrera.id = null
+      letCarrera.titulo = ''
+      letCarrera.grado = ''
+      letCarrera.planEstudio = []
     }
 
-    function ocultar () {
+    function functionOcultar () {
       dialogoCrear.value = false
       dialogoEliminar.value = false
     }
 
-    function cancelar () {
-      ocultar()
-      limpiar()
+    function functionAccionVer (props) {
+      vueStore.commit('setAccionCarrera', 'ver')
+      vueStore.commit('setCarrera', props.row)
+      vueRouter.push({ name: 'Carrera' })
     }
 
-    async function guardar () {
-      if (formulario.value.validate()) {
-        try {
-          cargando.value = true
-          const objeto = {
-            id: carrera.id,
-            titulo: carrera.titulo,
-            grado: carrera.grado,
-            planEstudio: carrera.planEstudio
-          }
-          await store.dispatch('saveCarrera', objeto).then((result) => {
-            if (result.status === 201) {
-              servicioAlertas.alertaExito('Carrera guardada correctamente')
-              getCarreras().then(() => {
-                carreras.value = [...store.state.carrera.carreras]
-              })
-            } else if (result.status === 202) {
-              const mensaje = 'Error al guardar ' + result.headers.estado
-              servicioAlertas.infoAdvertencia(mensaje)
-              console.warn(mensaje)
-            } else {
-              const mensaje = 'Error al guardar ' + result.status
-              servicioAlertas.infoError(mensaje)
-              console.error(mensaje)
-            }
+    async function asyncFunctionBorrarCarrera () {
+      try {
+        letCargando.value = true
+        const result = await vueStore.dispatch('delCarrera', letCarrera.id)
+        if (result.status === 200) {
+          servicioAlertas.alertaExito('Carrera eliminada correctamente')
+          const arreglo = letCarreras.value.filter(function (carreraEliminada) {
+            return carreraEliminada.id !== letCarrera.id
           })
-          cargando.value = false
-          ocultar()
-        } catch (err) {
-          const mensaje = 'Error al guardar ' + err
+          letCarreras.value = [...arreglo]
+        } else if (result.status === 202) {
+          const mensaje = 'Error al eliminar ' + result.headers.estado
+          servicioAlertas.infoAdvertencia(mensaje)
+          console.warn(mensaje)
+        } else {
+          const mensaje = 'Error al eliminar ' + result.status
           servicioAlertas.infoError(mensaje)
           console.error(mensaje)
-          cargando.value = false
-          ocultar()
         }
-      } else {
-        servicioAlertas.alertaError('formulario NO validado')
-      }
-    }
-
-    async function borrar () {
-      try {
-        cargando.value = true
-        await store.dispatch('delCarrera', carrera.id).then((result) => {
-          if (result.status === 200) {
-            servicioAlertas.alertaExito('Carrera eliminada correctamente')
-            const arreglo = carreras.value.filter(function (carreraEliminada) {
-              return carreraEliminada.id !== carrera.id
-            })
-            carreras.value = [...arreglo]
-          } else if (result.status === 202) {
-            const mensaje = 'Error al eliminar ' + result.headers.estado
-            servicioAlertas.infoAdvertencia(mensaje)
-            console.warn(mensaje)
-          } else {
-            const mensaje = 'Error al eliminar ' + result.status
-            servicioAlertas.infoError(mensaje)
-            console.error(mensaje)
-          }
-        })
-        cargando.value = false
-        ocultar()
+        letCargando.value = false
+        functionOcultar()
       } catch (err) {
-        cargando.value = false
-        ocultar()
+        letCargando.value = false
+        functionOcultar()
         servicioAlertas.infoAdvertencia('No se puede eliminar la entidad ya que existen estudiantes que dependen de ella.')
       }
     }
 
-    async function getCarreras () {
+    async function asyncFunctionBuscarCarreraPorId () {
       try {
-        cargando.value = true
-        const datos = await store.dispatch('getCarreras')
+        letCargando.value = true
+        const datos = await vueStore.dispatch('getCarreraPorId', letCarrera.id)
         if (datos.status === 200) {
-          cargando.value = false
-          carreras.value = await datos.data
+          letCargando.value = false
+          vueStore.commit('setCarrera', await datos.data)
+          vueStore.commit('setAccionCarrera', 'ver')
+          servicioAlertas.alertaExito('Se encontró la Carrera.')
+          vueRouter.push({ name: 'Carrera' })
+        } else if (datos.status === 202) {
+          const mensaje = 'No se encontro la identidad ' + datos.headers.estado
+          servicioAlertas.infoAdvertencia(mensaje)
+          console.warn(mensaje)
+        } else {
+          const mensaje = 'Error al cargar carreras ' + datos.status
+          servicioAlertas.infoError(mensaje)
+          console.error(mensaje)
+        }
+        functionOcultar()
+        letCargando.value = false
+      } catch (err) {
+        letCargando.value = false
+        functionOcultar()
+        const error = 'Hubo un error al intentar buscar la carrera ' + err
+        servicioAlertas.infoError(error)
+        console.error(error)
+      }
+    }
+
+    async function asyncFunctionBuscarCarreras () {
+      try {
+        letCargando.value = true
+        const datos = await vueStore.dispatch('getCarreras')
+        if (datos.status === 200) {
+          letCargando.value = false
+          letCarreras.value = await datos.data
         } else if (datos.status === 202) {
           const mensaje = 'Error al cargar carreras ' + datos.headers.estado
           servicioAlertas.infoAdvertencia(mensaje)
@@ -385,46 +414,85 @@ export default {
           servicioAlertas.infoError(mensaje)
           console.error(mensaje)
         }
-        ocultar()
-        cargando.value = false
+        functionOcultar()
+        letCargando.value = false
       } catch (err) {
-        cargando.value = false
-        ocultar()
+        letCargando.value = false
+        functionOcultar()
         const error = 'Hubo un error al intentar cargar las carreras ' + err
         servicioAlertas.infoError(error)
         console.error(error)
       }
     }
 
+    async function asyncFunctionGuardarCarrera () {
+      if (letFormulario.value.validate()) {
+        try {
+          letCargando.value = true
+          const objeto = {
+            id: letCarrera.id,
+            titulo: letCarrera.titulo,
+            grado: letCarrera.grado
+          }
+          const result = await vueStore.dispatch('saveCarrera', objeto)
+          if (result.status === 201) {
+            servicioAlertas.alertaExito('Carrera guardada correctamente')
+            asyncFunctionBuscarCarreras()
+          } else if (result.status === 202) {
+            const mensaje = 'Error al guardar ' + result.headers.estado
+            servicioAlertas.infoAdvertencia(mensaje)
+            console.warn(mensaje)
+          } else {
+            const mensaje = 'Error al guardar ' + result.status
+            servicioAlertas.infoError(mensaje)
+            console.error(mensaje)
+          }
+          letCargando.value = false
+          functionOcultar()
+        } catch (err) {
+          const mensaje = 'Error al guardar ' + err
+          servicioAlertas.infoError(mensaje)
+          console.error(mensaje)
+          letCargando.value = false
+          functionOcultar()
+        }
+      } else {
+        servicioAlertas.alertaError('Formulario no validado')
+      }
+    }
+
     return {
-      crear,
-      ver,
-      editar,
-      eliminar,
-      guardar,
-      cancelar,
-      borrar,
+      asyncFunctionBorrarCarrera,
+      asyncFunctionBuscarCarreraPorId,
+      asyncFunctionGuardarCarrera,
 
-      estados,
+      functionAccionBuscarPorId,
+      functionAccionCancelar,
+      functionAccionCrear,
+      functionAccionEditar,
+      functionAccionEliminar,
+      functionAccionVer,
 
-      formulario,
-      cargando,
+      constColumnas,
+      constGrados,
+      constPaginacion,
 
-      carrera,
-      carreras,
+      letCargando,
+      letCarrera,
+      letCarreras,
+      letFilter,
+      letFormulario,
+      letFormularioId,
 
+      dialogoBuscar,
       dialogoCrear,
       dialogoEliminar,
 
-      paginacion,
-      columnas,
-
-      filter: ref(''),
       exportTable () {
         let csvContent = 'data:text/csv;charset=utf-8,'
         csvContent += [
-          Object.keys(carreras.value[0]).join(';'),
-          ...carreras.value.map(item => Object.values(item).join(';'))
+          Object.keys(letCarreras.value[0]).join(';'),
+          ...letCarreras.value.map(item => Object.values(item).join(';'))
         ]
           .join('\n')
           .replace(/(^\[)|(\]$)/gm, '')
@@ -437,9 +505,11 @@ export default {
       },
 
       rules: {
-        required: (value) => !!value || 'Debés completar el campo',
-        min: (v) => v.length >= 8 || 'Al menos 8 carácteres',
-        max: (v) => v.length <= 50 || 'Cómo máximo 50 carácteres'
+        required: (v) => !!v || 'Debés completar el campo',
+        min: (v) => v.length >= 3 || 'Al menos 3 carácteres',
+        max: (v) => v.length <= 50 || 'Máximo 50 carácteres',
+        minNum: (v) => v.length >= 1 || 'Al menos 1 carácteres',
+        maxNum: (v) => v.length <= 7 || 'Cómo máximo 7 carácteres'
       }
     }
   }

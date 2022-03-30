@@ -118,7 +118,7 @@ public class MateriaController {
         if (objeto.isEmpty()) {
             return ResponseEntity.accepted().headers(Helper.cabeceraHTTP("No existe una entidad Materia modificable con id: " + id + ".")).build();
         }
-        Materia entidad = service.update(MateriaForm.formMateriaDTO(new Materia()));
+        Materia entidad = service.update(MateriaForm.formMateriaDTO(objeto.get()));
         return new ResponseEntity<>(entidad, Helper.cabeceraHTTP("Se modificó y persistió correctamente la entidad Materia con id: " + id + "."), HttpStatus.CREATED);
     }
 

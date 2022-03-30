@@ -42,5 +42,13 @@ public class EstudianteCarrera {
         this.ingreso = ingreso;
         this.egreso = egreso;
     }
+
+    public EstudianteCarrera(Long id, Estudiante estudiante, Carrera carrera, Date ingreso, Date egreso) {
+        this.id = id;
+        this.estudiante = estudiante;
+        this.carrera = carrera;
+        this.ingreso = ingreso;
+        this.egreso = egreso;
+    }
 }
 

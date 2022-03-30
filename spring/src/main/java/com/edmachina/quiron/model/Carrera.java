@@ -36,4 +36,11 @@ public class Carrera {
         this.grado = grado;
         this.planEstudio = planEstudio;
     }
+
+    public Carrera(Long id, String titulo, EnumTituloGrado grado, Set<Materia> planEstudio) {
+        this.id = id;
+        this.titulo = titulo;
+        this.grado = grado;
+        this.planEstudio = planEstudio;
+    }
 }

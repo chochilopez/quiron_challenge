@@ -9,10 +9,10 @@ import io.swagger.v3.oas.annotations.Hidden;
 import lombok.Getter;
 import java.util.Date;
 
-@Hidden
 @Getter
+@Hidden
 public class EstudianteMateriaForm {
-
+    private Long id;
     private Estudiante estudiante;
     private Materia materia;
     private Carrera carrera;
@@ -22,6 +22,8 @@ public class EstudianteMateriaForm {
     private Date finCursado;
 
     public EstudianteMateria formEstudianteMateriaDTO(EstudianteMateria dto){
+        if (this.id != null)
+            dto.setId(this.getId());
         if (this.estudiante != null)
             dto.setEstudiante(this.getEstudiante());
         if (this.materia != null)

@@ -1,14 +1,15 @@
 package com.edmachina.quiron.service.implementation;
 
 import com.edmachina.quiron.model.Carrera;
+import com.edmachina.quiron.model.Materia;
 import com.edmachina.quiron.repository.CarreraRepository;
+import com.edmachina.quiron.repository.MateriaRepository;
 import com.edmachina.quiron.service.CarreraServiceInterfase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -16,6 +17,71 @@ import java.util.Optional;
 public class CarreraServiceImplementation implements CarreraServiceInterfase {
 
     private final CarreraRepository repositorio;
+    private final MateriaRepository materiaRepository;
+
+    @Override
+    public Carrera quitarMateria(Long idCarrera, Long idMateria) throws Exception {
+        try {
+            Optional<Carrera> carrera = repositorio.findById(idCarrera);
+            if (carrera.isPresent()) {
+                if (!carrera.get().getPlanEstudio().isEmpty()) {
+                    Optional<Materia> materia = materiaRepository.findById(idMateria);
+                    if (materia.isPresent()) {
+                        Set<Materia> materias = carrera.get().getPlanEstudio();
+                        if (materias.contains(materia.get())) {
+                            materias.remove(materia.get());
+                            carrera.get().setPlanEstudio(materias);
+                            return repositorio.save(carrera.get());
+                        } else {
+                            log.warn("No existe una Materia {} en el plan de estudios de {}.", materia.get().getNombre(), carrera.get().getTitulo());
+                            return null;
+                        }
+                    } else {
+                        log.warn("No existe una entidad Materia con id: {}.", idMateria);
+                        return null;
+                    }
+                }
+            } else {
+                log.warn("No existe una entidad Carrera con id: {}.", idCarrera);
+                return null;
+            }
+            log.warn("No se pudo eliminar la materia del plan de estudios.");
+            return null;
+        } catch (Exception e) {
+            log.error("Ocurrió un error al eliminar la materia del plan de estudios. Exepcion: {}.", e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public Carrera agregarMateria(Long idCarrera, Long idMateria) throws Exception {
+        try {
+            Optional<Carrera> carrera = repositorio.findById(idCarrera);
+            if (carrera.isPresent()) {
+                    Optional<Materia> materia = materiaRepository.findById(idMateria);
+                    if (materia.isPresent()) {
+                        Set<Materia> materias = carrera.get().getPlanEstudio();
+                        if (!materias.contains(materia.get())) {
+                            materias.add(materia.get());
+                            carrera.get().setPlanEstudio(materias);
+                            return repositorio.save(carrera.get());
+                        } else {
+                            log.warn("Ya existe una Materia {} en el plan de estudios de {}.", materia.get().getNombre(), carrera.get().getTitulo());
+                            return null;
+                        }
+                    } else {
+                        log.warn("No existe una entidad Materia con id: {}.", idMateria);
+                        return null;
+                    }
+            } else {
+                log.warn("No existe una entidad Carrera con id: {}.", idCarrera);
+                return null;
+            }
+        } catch (Exception e) {
+            log.error("Ocurrió un error al agregar la materia al plan de estudios. Exepcion: {}.", e.getMessage());
+            return null;
+        }
+    }
 
     @Override
     public Long cantidad() {

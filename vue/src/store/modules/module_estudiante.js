@@ -2,12 +2,16 @@ import axios from 'axios'
 
 export default {
   state: {
+    accionCarrera: null,
     allEstudiantes: null,
     estudiante: null,
     estudiantes: null,
     leads: null
   },
   mutations: {
+    setAccionCarrera (state, accionCarrera) {
+      state.accionCarrera = accionCarrera
+    },
     setAllEstudiantes (state, allEstudiantes) {
       state.allEstudiantes = allEstudiantes
     },
@@ -123,6 +127,21 @@ export default {
       return new Promise((resolve, reject) => {
         axios
           .get('http://localhost:9088/api/estudiante/buscar-por-id/' + id)
+          .then((result) => {
+            if (result.status === 200) {
+              commit('setEstudiante', result.data)
+            }
+            resolve(result)
+          })
+          .catch((error) => {
+            reject(error)
+          })
+      })
+    },
+    getEstudiantePorIdEstado ({ commit, rootState }, objeto) {
+      return new Promise((resolve, reject) => {
+        axios
+          .get('http://localhost:9088/api/estudiante/buscar-por-id-y-estado/' + objeto.id + '/' + objeto.status)
           .then((result) => {
             if (result.status === 200) {
               commit('setEstudiante', result.data)

@@ -9,8 +9,8 @@ import java.util.Optional;
 public interface EstudianteServiceInterfase {
 
     Long countByStatus(String status);
-
     List<Estudiante> findAllByStatus(String status);
+    Optional<Estudiante> findByIdAndStatus(Long id, String status);
 
     Optional<Estudiante> findById(Long id);
     List<Estudiante> findAll();

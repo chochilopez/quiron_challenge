@@ -13,9 +13,10 @@ import javax.persistence.TemporalType;
 import java.util.Date;
 import java.util.Set;
 
-@Hidden
 @Getter
+@Hidden
 public class EstudianteForm {
+    private Long id;
     private String nombre;
     private String apellido;
     private String email;
@@ -26,6 +27,8 @@ public class EstudianteForm {
     private Date ingresoEstudiante;
 
     public Estudiante formEstudianteDTO(Estudiante dto){
+        if (this.id != null)
+            dto.setId(this.getId());
         if (this.nombre != null)
             dto.setNombre(this.getNombre());
         if (this.apellido != null)

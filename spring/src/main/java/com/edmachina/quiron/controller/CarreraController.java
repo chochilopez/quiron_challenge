@@ -6,7 +6,6 @@ import com.edmachina.quiron.model.Carrera;
 import com.edmachina.quiron.service.implementation.CarreraServiceImplementation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +24,50 @@ import java.util.Optional;
 public class CarreraController {
 
     private final CarreraServiceImplementation service;
+
+    @Operation(
+            summary = "quitarMateria - Quitar una Materia al plan de estudio de una Carrera.",
+            description = "Este endpoint recibe un idCarrera y un idMateria, devulve una entidad Carrera con la materia quitada del plan de estudios."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK Endpoint consumido correctamente, 1 ocurrencia. Mas info en campo estado en el header."),
+            @ApiResponse(responseCode = "202", description = "ACCEPTED Endpoint consumido correctamente, 0 ocurrencias. Mas info en campo estado en el header.")
+    })
+    @PostMapping(value = "/quitar-materia/{idCarrera}/{idMateria}")
+    public ResponseEntity<Carrera> quitarMateria(
+            @Parameter(description = "Valor númerico de tipo Long correspondiente al id de la entidad Carrera.", required = true, example = "4")
+            @PathVariable(name = "idCarrera") @javax.validation.constraints.Size(min = 1, max = 10) Long idCarrera,
+            @Parameter(description = "Valor númerico de tipo Long correspondiente al id de la entidad Materia.", required = true, example = "4")
+            @PathVariable(name = "idMateria") @javax.validation.constraints.Size(min = 1, max = 10) Long idMateria
+    ) throws Exception {
+        Carrera carrera = service.quitarMateria(idCarrera, idMateria);
+        if (carrera != null)
+            return new ResponseEntity<>(carrera, Helper.cabeceraHTTP("Se quitó la Materia id: " + idMateria + " de la Carrera id: " + idCarrera + "."), HttpStatus.OK);
+        else
+            return ResponseEntity.accepted().headers(Helper.cabeceraHTTP("No se quitó la Materia id: " + idMateria + " de la Carrera id: " + idCarrera + ".")).build();
+    }
+
+    @Operation(
+            summary = "agregarMateria - Agregar una Materia al plan de estudio de una Carrera.",
+            description = "Este endpoint recibe un idCarrera y un idMateria, devulve una entidad Carrera con la materia agregada al plan de estudios."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK Endpoint consumido correctamente, 1 ocurrencia. Mas info en campo estado en el header."),
+            @ApiResponse(responseCode = "202", description = "ACCEPTED Endpoint consumido correctamente, 0 ocurrencias. Mas info en campo estado en el header.")
+    })
+    @PostMapping(value = "/agregar-materia/{idCarrera}/{idMateria}")
+    public ResponseEntity<Carrera> agregarMateria(
+            @Parameter(description = "Valor númerico de tipo Long correspondiente al id de la entidad Carrera.", required = true, example = "4")
+            @PathVariable(name = "idCarrera") @javax.validation.constraints.Size(min = 1, max = 10) Long idCarrera,
+            @Parameter(description = "Valor númerico de tipo Long correspondiente al id de la entidad Materia.", required = true, example = "4")
+            @PathVariable(name = "idMateria") @javax.validation.constraints.Size(min = 1, max = 10) Long idMateria
+    ) throws Exception {
+        Carrera carrera = service.agregarMateria(idCarrera, idMateria);
+        if (carrera != null)
+            return new ResponseEntity<>(carrera, Helper.cabeceraHTTP("Se agregó la Materia id: " + idMateria + " a la Carrera id: " + idCarrera + "."), HttpStatus.OK);
+        else
+            return ResponseEntity.accepted().headers(Helper.cabeceraHTTP("No se agregó la Materia id: " + idMateria + " a la Carrera id: " + idCarrera + ".")).build();
+    }
 
     @Operation(
             summary = "count - Cantidad de entidades existentes.",
@@ -120,7 +163,7 @@ public class CarreraController {
         if (objeto.isEmpty()) {
             return ResponseEntity.accepted().headers(Helper.cabeceraHTTP("No existe una entidad Carrera modificable con id: " + id + ".")).build();
         }
-        Carrera entidad = service.update(CarreraForm.formCarreraDTO(new Carrera()));
+        Carrera entidad = service.update(CarreraForm.formCarreraDTO(objeto.get()));
         return new ResponseEntity<>(entidad, Helper.cabeceraHTTP("Se modificó y persistió correctamente la entidad Carrera con id: " + id + "."), HttpStatus.CREATED);
     }
 

@@ -1,16 +1,16 @@
 <template>
   <div class="row">
     <div class="col">
-      <Estudiantes />
+      <Estudiante />
     </div>
   </div>
 </template>
 
 <script>
-import Estudiantes from 'src/components/panel/Estudiantes.vue'
+import Estudiante from 'src/components/panel/Estudiante.vue'
 export default {
   components: {
-    Estudiantes
+    Estudiante
   },
   setup () {
     return {}
