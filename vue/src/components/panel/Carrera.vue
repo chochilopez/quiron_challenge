@@ -394,7 +394,7 @@ export default {
         } catch (err) {
           letCargando.value = false
           functionOcultar()
-          console.error('Error front', 'panel-images -> image -> save error -> ' + err.message)
+          console.error('Error front', 'save error -> ' + err.message)
           console.error('Error api', err.headers.estado)
           servicioAlertas.alertaError(err.headers.estado)
         }

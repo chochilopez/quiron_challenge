@@ -2,138 +2,144 @@
   <div class="row q-pa-md fuente3">
     <div class="col">
       <q-table
-        :showing="!cargando"
+        :showing="!letCargando"
         bordered
         title="Leads"
-        :columns="columnas"
+        :columns="constColumnas"
         rows-per-page-label="Registros por pagina"
         no-data-label="Sin datos para mostrar"
-        :pagination="paginacion"
-        :filter="filter"
+        :pagination="constPaginacion"
+        :filter="letFilter"
         hide-no-data
-        :rows="leads"
+        :rows="letLeads"
         row-key="name"
       >
         <template v-slot:top-right>
-          <q-input outlined dense debounce="300" v-model="filter" placeholder="Buscar">
+          <q-input outlined dense debounce="300" v-model="letFilter" placeholder="Buscar" class="q-ma-md">
             <template v-slot:append>
               <q-icon name="search" />
             </template>
           </q-input>
           <q-btn
-            class="q-ml-md bg-c-4 text-black"
-            icon-right="add_box"
-            label="Nueva lead"
-            no-caps
-            @click="crear" />
-          <q-btn
-            class="q-ml-md bg-c-5 text-black"
+            class="q-ma-md bg-c-5 text-black"
             icon-right="archive"
             label="Exportar"
             no-caps
             @click="exportTable" />
+          <q-btn
+            class="q-ma-md bg-info text-black"
+            icon-right="mdi-magnify"
+            label="Buscar por id"
+            no-caps
+            @click="functionAccionBuscarPorId" />
+          <q-btn
+            class="q-ma-md bg-info text-black"
+            icon-right="mdi-plus-box"
+            label="Agregar Lead"
+            no-caps
+            @click="functionAccionAgregarLead" />
         </template>
-        <template v-slot:body-cell-imagen="icons">
-          <q-td :props="icons">
-            <q-icon :name="icons.row.icono" size="md"></q-icon>
+        <template v-slot:body-cell-ingresoLead="props">
+          <q-td :props="props">
+            {{ functionFormatoFecha(props.row.ingresoLead) }}
           </q-td>
         </template>
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
-            <q-btn @click="ver(props)" dense round flat class="text-c-1" icon="visibility">
-              <q-tooltip anchor="top middle" self="bottom middle" :offset="[3, 3]">
+            <q-btn @click="functionAccionVer(props)" dense round flat class="text-c-1" icon="visibility">
+              <q-tooltip anchor="top middle" self="bottom middle" :offset="[3, 3]" class="bg-c-1">
                 Ver
               </q-tooltip>
             </q-btn>
-            <q-btn @click="editar(props)" dense round flat class="text-c-4" icon="edit">
-              <q-tooltip anchor="top middle" self="bottom middle" :offset="[3, 3]">
+            <q-btn @click="functionAccionEditar(props)" dense round flat class="text-c-4" icon="edit">
+              <q-tooltip anchor="top middle" self="bottom middle" :offset="[3, 3]" class="bg-c-1">
                 Editar
               </q-tooltip>
             </q-btn>
-            <q-btn @click="eliminar(props)" dense round flat class="text-c-6" icon="delete">
-              <q-tooltip anchor="top middle" self="bottom middle" :offset="[3, 3]">
+            <q-btn @click="functionAccionEliminar(props)" dense round flat class="text-c-6" icon="delete">
+              <q-tooltip anchor="top middle" self="bottom middle" :offset="[3, 3]" class="bg-c-1">
                 Eliminar
               </q-tooltip>
             </q-btn>
           </q-td>
         </template>
       </q-table>
-      <q-inner-loading :showing="cargando">
+      <q-inner-loading :showing="letCargando">
         <q-spinner-puff class="text-c-1" size="6em" />
       </q-inner-loading>
     </div>
   </div>
 
-  <q-dialog v-model="dialogoVer" persistent transition-show="scale" transition-hide="scale">
+  <q-dialog v-model="dialogoEliminar" persistent transition-show="scale" transition-hide="scale">
     <q-card class="text-white">
-      <q-bar class="bg-c-5 text-black">
-        <div>Ver lead</div>
+      <q-bar class="bg-c-6">
+        <div>Eliminar lead</div>
         <q-space />
         <q-btn dense flat icon="close" v-close-popup>
-          <q-tooltip class="bg-c-2 text-white">Cerrar</q-tooltip>
+          <q-tooltip class="bg-c-1 text-white">Cerrar</q-tooltip>
         </q-btn>
       </q-bar>
-      <q-card-section>
+      <q-card-section class="q-pa-md">
         <q-list dense bordered padding class="rounded-borders">
 
           <q-item clickable v-ripple class="q-ma-md">
             <q-item-section>
-              <q-item-label class="text-c-2">{{ lead.id }}</q-item-label>
+              <q-item-label class="text-black">{{ letLead.id }}</q-item-label>
               <q-item-label caption>Id</q-item-label>
             </q-item-section>
           </q-item>
 
           <q-item clickable v-ripple class="q-ma-md">
             <q-item-section>
-              <q-item-label class="text-c-2">{{ lead.nombre === null || lead.nombre === '' ? 'SIN DATOS' : lead.nombre }}</q-item-label>
+              <q-item-label class="text-black">{{ letLead.nombre === null || letLead.nombre === '' ? 'SIN DATOS' : letLead.nombre }}</q-item-label>
               <q-item-label caption>Nombre</q-item-label>
             </q-item-section>
           </q-item>
 
           <q-item clickable v-ripple class="q-ma-md">
             <q-item-section>
-              <q-item-label class="text-c-2">{{ lead.apellido === null || lead.apellido === '' ? 'SIN DATOS' : lead.apellido }}</q-item-label>
+              <q-item-label class="text-black">{{ letLead.apellido === null || letLead.apellido === '' ? 'SIN DATOS' : letLead.apellido }}</q-item-label>
               <q-item-label caption>Apellido</q-item-label>
             </q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple class="q-ma-md">
-            <q-item-section>
-              <q-item-label class="text-c-2">{{ lead.email === null || lead.email === '' ? 'SIN DATOS' : lead.email }}</q-item-label>
-              <q-item-label caption>Email</q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-item clickable v-ripple class="q-ma-md">
-            <q-item-section>
-              <q-item-label class="text-c-2">{{ lead.direccion === null || lead.direccion === '' ? 'SIN DATOS' : lead.direccion }}</q-item-label>
-              <q-item-label caption>Direccion</q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-item clickable v-ripple class="q-ma-md">
-            <q-item-section>
-              <q-item-label class="text-c-2">{{ lead.telefono === null || lead.telefono === '' ? 'SIN DATOS' : lead.telefono }}</q-item-label>
-              <q-item-label caption>Teléfono</q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-item clickable v-ripple class="q-ma-md">
-            <q-item-section>
-              <q-item-label class="text-c-2">{{ lead.status === null || lead.status === '' ? 'SIN DATOS' : lead.status }}</q-item-label>
-              <q-item-label caption>Estado</q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-item clickable v-ripple class="q-ma-md">
-            <q-item-section>
-              <q-item-label class="text-c-2">{{ lead.ingresoLead === null || lead.ingresoLead === '' ? 'SIN DATOS' : lead.ingresoLead }}</q-item-label>
-              <q-item-label caption>Ingreso Lead</q-item-label>
-            </q-item-section>
-          </q-item>
-
         </q-list>
+        <div class="row justify-end">
+          <q-btn v-close-popup class="q-ma-md bg-c-7 text-white" icon-right="mdi-trash-can"  @click="asyncFunctionBorrarLead" label="Eliminar" no-caps />
+        </div>
       </q-card-section>
+    </q-card>
+  </q-dialog>
+
+  <q-dialog v-model="dialogoBuscar" persistent transition-show="scale" transition-hide="scale">
+    <q-card class="text-black">
+      <q-bar class="bg-c-4">
+        <div>Buscar lead por id</div>
+        <q-space />
+        <q-btn dense flat icon="close" v-close-popup>
+          <q-tooltip class="bg-c-1">Cerrar</q-tooltip>
+        </q-btn>
+      </q-bar>
+      <q-form  @submit.prevent="asyncFunctionBuscarLeadPorIdYEstado()" ref="letFormularioId">
+        <div class="row justify-around">
+          <div class="col-6 q-pa-md">
+            <q-input
+              v-model="letLead.id"
+              label="Id"
+              type="number"
+              outlined
+              :rules="[rules.required, rules.minNum, rules.maxNum]"
+              clearable>
+              <template v-slot:before>
+                <q-icon name="mdi-counter" />
+              </template>
+            </q-input>
+          </div>
+          <div class="col-6 q-pa-md">
+            <q-btn type="submit" class="q-ma-md bg-c-7 text-white" icon-right="mdi-magnify" label="Buscar por id" no-caps />
+          </div>
+        </div>
+      </q-form>
     </q-card>
   </q-dialog>
 
@@ -141,20 +147,24 @@
 
 <script>
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 import { ref, reactive } from 'vue'
 import { servicioAlertas } from 'app/_helpers/alerta'
+import Helper from 'app/_helpers/helper'
 
-const paginacion = {
-  rowsPerPage: 10,
-  sortBy: 'id',
-  descending: true
-}
-
-const columnas = [
+const constColumnas = [
   {
     name: 'id',
-    label: 'Id Carrera',
+    label: 'Id Lead',
     field: 'id',
+    sortable: true,
+    sortOrder: 'ad',
+    align: 'center'
+  },
+  {
+    name: 'apellido',
+    label: 'Apellido',
+    field: 'apellido',
     sortable: true,
     sortOrder: 'ad',
     align: 'left'
@@ -168,14 +178,6 @@ const columnas = [
     align: 'left'
   },
   {
-    name: 'apellido',
-    label: 'Apellido',
-    field: 'apellido',
-    sortable: true,
-    sortOrder: 'ad',
-    align: 'left'
-  },
-  {
     name: 'email',
     label: 'Email',
     field: 'email',
@@ -184,20 +186,12 @@ const columnas = [
     align: 'left'
   },
   {
-    name: 'telefono',
-    label: 'Teléfono',
-    field: 'telefono',
-    sortable: true,
-    sortOrder: 'ad',
-    align: 'left'
-  },
-  {
     name: 'ingresoLead',
     label: 'Ingreso Lead',
-    field: 'ingresoLead',
+    field: '',
     sortable: true,
     sortOrder: 'ad',
-    align: 'left'
+    align: 'center'
   },
   {
     name: 'actions',
@@ -207,13 +201,26 @@ const columnas = [
   }
 ]
 
+const constPaginacion = {
+  rowsPerPage: 10,
+  sortBy: 'id',
+  descending: true
+}
+
 export default {
   setup () {
-    const store = useStore()
-    const cargando = ref(false)
-    const leads = ref([])
-    const dialogoVer = ref(false)
-    const lead = reactive({
+    const vueRouter = useRouter()
+    const vueStore = useStore()
+
+    const dialogoBuscar = ref(false)
+    const dialogoCrear = ref(false)
+    const dialogoEliminar = ref(false)
+
+    const letCargando = ref(false)
+    const letFilter = ref('')
+    const letFormulario = ref(null)
+    const letFormularioId = ref(null)
+    const letLead = reactive({
       id: null,
       nombre: '',
       apellido: '',
@@ -221,57 +228,138 @@ export default {
       direccion: '',
       telefono: '',
       status: '',
-      ingresoLead: '',
-      ingresoEstudiante: ''
+      ingresoLead: ''
     })
+    const letLeads = ref([])
 
-    getLeads()
+    asyncFunctionBuscarLeads()
 
-    function crear () {
-      servicioAlertas.alertaAdvertencia('Opcion no habilitada')
+    function functionAccionAgregarLead () {
+      vueStore.commit('setLead', null)
+      vueStore.commit('setAccionEstudiante', 'crear')
+      vueRouter.push({ name: 'Lead' })
     }
 
-    function ver (props) {
-      Object.assign(lead, props.row)
-      dialogoVer.value = true
+    function functionAccionBuscarPorId () {
+      dialogoBuscar.value = true
     }
 
-    function editar (props) {
-      servicioAlertas.alertaAdvertencia('Opcion no habilitada')
+    function functionAccionCancelar () {
+      functionOcultar()
+      functionLimpiar()
     }
 
-    function eliminar (props) {
-      servicioAlertas.alertaAdvertencia('Opcion no habilitada')
+    function functionAccionCrear () {
+      functionLimpiar()
+      dialogoCrear.value = true
     }
 
-    function limpiar () {
-      lead.id = null
-      lead.nombre = ''
-      lead.apellido = ''
-      lead.email = ''
-      lead.direccion = ''
-      lead.telefono = ''
-      lead.status = ''
-      lead.ingresoLead = ''
-      lead.ingresoEstudiante = ''
+    function functionAccionEditar (props) {
+      vueStore.commit('setAccionEstudiante', 'editar')
+      vueStore.commit('setLead', props.row)
+      vueRouter.push({ name: 'Lead' })
     }
 
-    function ocultar () {
-      dialogoVer.value = false
+    function functionAccionEliminar (props) {
+      Object.assign(letLead, props.row)
+      dialogoEliminar.value = true
     }
 
-    function cancelar () {
-      ocultar()
-      limpiar()
+    function functionAccionVer (props) {
+      vueStore.commit('setAccionEstudiante', 'ver')
+      vueStore.commit('setLead', props.row)
+      vueRouter.push({ name: 'Lead' })
     }
 
-    async function getLeads () {
+    function functionFormatoFecha (fecha) {
+      return Helper.getFormatoFecha(fecha)
+    }
+
+    function functionLimpiar () {
+      letLead.id = null
+      letLead.nombre = ''
+      letLead.apellido = ''
+      letLead.email = ''
+      letLead.direccion = ''
+      letLead.telefono = ''
+      letLead.status = ''
+      letLead.ingresoLead = ''
+    }
+
+    function functionOcultar () {
+      dialogoCrear.value = false
+      dialogoEliminar.value = false
+    }
+
+    async function asyncFunctionBorrarLead () {
       try {
-        cargando.value = true
-        const datos = await store.dispatch('getLeads')
+        letCargando.value = true
+        const result = await vueStore.dispatch('delEstudiante', letLead.id)
+        if (result.status === 200) {
+          servicioAlertas.alertaExito('Lead eliminado correctamente')
+          const arreglo = letLeads.value.filter(function (estudianteEliminado) {
+            return estudianteEliminado.id !== letLead.id
+          })
+          letLeads.value = [...arreglo]
+        } else if (result.status === 202) {
+          const mensaje = 'Error al eliminar ' + result.headers.estado
+          servicioAlertas.infoAdvertencia(mensaje)
+          console.warn(mensaje)
+        } else {
+          const mensaje = 'Error al eliminar ' + result.status
+          servicioAlertas.infoError(mensaje)
+          console.error(mensaje)
+        }
+        letCargando.value = false
+        functionOcultar()
+      } catch (err) {
+        letCargando.value = false
+        functionOcultar()
+        servicioAlertas.infoAdvertencia('No se puede eliminar la entidad.')
+      }
+    }
+
+    async function asyncFunctionBuscarLeadPorIdYEstado () {
+      try {
+        letCargando.value = true
+        const objeto = {
+          id: letLead.id,
+          status: 'ESTADO_LEAD'
+        }
+        const datos = await vueStore.dispatch('getEstudiantePorIdEstado', objeto)
         if (datos.status === 200) {
-          cargando.value = false
-          leads.value = await datos.data
+          letCargando.value = false
+          vueStore.commit('setLead', await datos.data)
+          vueStore.commit('setAccionEstudiante', 'ver')
+          servicioAlertas.alertaExito('Se encontró la entidad Lead.')
+          vueRouter.push({ name: 'Lead' })
+        } else if (datos.status === 202) {
+          const mensaje = 'No se encontro la identidad ' + datos.headers.estado
+          servicioAlertas.infoAdvertencia(mensaje)
+          console.warn(mensaje)
+        } else {
+          const mensaje = 'Error al cargar el lead ' + datos.status
+          servicioAlertas.infoError(mensaje)
+          console.error(mensaje)
+        }
+        functionOcultar()
+        letCargando.value = false
+      } catch (err) {
+        letCargando.value = false
+        functionOcultar()
+        const error = 'Hubo un error al intentar buscar el lead ' + err
+        servicioAlertas.infoError(error)
+        console.error(error)
+      }
+    }
+
+    async function asyncFunctionBuscarLeads () {
+      try {
+        letCargando.value = true
+        const datos = await vueStore.dispatch('getLeads')
+        if (datos.status === 200) {
+          letCargando.value = false
+          letLeads.value = await datos.data
         } else if (datos.status === 202) {
           const mensaje = 'Error al cargar leads ' + datos.headers.estado
           servicioAlertas.infoAdvertencia(mensaje)
@@ -281,40 +369,86 @@ export default {
           servicioAlertas.infoError(mensaje)
           console.error(mensaje)
         }
-        ocultar()
-        cargando.value = false
+        functionOcultar()
+        letCargando.value = false
       } catch (err) {
-        cargando.value = false
-        ocultar()
-        const error = 'Hubo un error al intentar cargar las leads ' + err
+        letCargando.value = false
+        functionOcultar()
+        const error = 'Hubo un error al intentar cargar los leads ' + err
         servicioAlertas.infoError(error)
         console.error(error)
       }
     }
 
+    async function asyncFunctionGuardarLead () {
+      if (letFormulario.value.validate()) {
+        try {
+          letCargando.value = true
+          const objeto = {
+            id: letLead.id,
+            titulo: letLead.titulo,
+            grado: letLead.grado
+          }
+          const result = await vueStore.dispatch('saveEstudiante', objeto)
+          if (result.status === 201) {
+            servicioAlertas.alertaExito('Lead guardada correctamente')
+            asyncFunctionBuscarLeads()
+          } else if (result.status === 202) {
+            const mensaje = 'Error al guardar ' + result.headers.estado
+            servicioAlertas.infoAdvertencia(mensaje)
+            console.warn(mensaje)
+          } else {
+            const mensaje = 'Error al guardar ' + result.status
+            servicioAlertas.infoError(mensaje)
+            console.error(mensaje)
+          }
+          letCargando.value = false
+          functionOcultar()
+        } catch (err) {
+          const mensaje = 'Error al guardar ' + err
+          servicioAlertas.infoError(mensaje)
+          console.error(mensaje)
+          letCargando.value = false
+          functionOcultar()
+        }
+      } else {
+        servicioAlertas.alertaError('Formulario no validado')
+      }
+    }
+
     return {
-      crear,
-      ver,
-      editar,
-      eliminar,
-      cancelar,
+      asyncFunctionBorrarLead,
+      asyncFunctionBuscarLeadPorIdYEstado,
+      asyncFunctionGuardarLead,
 
-      cargando,
+      functionAccionAgregarLead,
+      functionAccionBuscarPorId,
+      functionAccionCancelar,
+      functionAccionCrear,
+      functionAccionEditar,
+      functionAccionEliminar,
+      functionAccionVer,
+      functionFormatoFecha,
 
-      lead,
-      leads,
+      constColumnas,
+      constPaginacion,
 
-      dialogoVer,
+      letCargando,
+      letLead,
+      letLeads,
+      letFilter,
+      letFormulario,
+      letFormularioId,
 
-      paginacion,
-      columnas,
+      dialogoBuscar,
+      dialogoCrear,
+      dialogoEliminar,
 
-      filter: ref(''),
       exportTable () {
         let csvContent = 'data:text/csv;charset=utf-8,'
         csvContent += [
-          Object.keys(leads.value[0]).join(';'),
-          ...leads.value.map(item => Object.values(item).join(';'))
+          Object.keys(letLeads.value[0]).join(';'),
+          ...letLeads.value.map(item => Object.values(item).join(';'))
         ]
           .join('\n')
           .replace(/(^\[)|(\]$)/gm, '')
@@ -324,6 +458,14 @@ export default {
         link.setAttribute('href', data)
         link.setAttribute('download', 'leads.csv')
         link.click()
+      },
+
+      rules: {
+        required: (v) => !!v || 'Debés completar el campo',
+        min: (v) => v.length >= 3 || 'Al menos 3 carácteres',
+        max: (v) => v.length <= 50 || 'Máximo 50 carácteres',
+        minNum: (v) => v.length >= 1 || 'Al menos 1 carácteres',
+        maxNum: (v) => v.length <= 7 || 'Cómo máximo 7 carácteres'
       }
     }
   }

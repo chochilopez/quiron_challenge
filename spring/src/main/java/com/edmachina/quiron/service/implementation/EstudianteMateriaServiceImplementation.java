@@ -22,6 +22,54 @@ public class EstudianteMateriaServiceImplementation implements EstudianteMateria
     private final EstudianteMateriaRepository repositorio;
 
     @Override
+    public Optional<EstudianteMateria> inscribirMateria(Long estudianteId, Long materiaId) {
+        log.info("Inscribiendo el estudiante: " + estudianteId + " a la materia: " + materiaId + ".");
+        Optional<EstudianteMateria> estudianteMaterias = repositorio.findByEstudianteIdAndMateriaId(estudianteId, materiaId);
+        if (estudianteMaterias.isEmpty()) {
+            log.info("La tabla no posee entidades EstudianteMateria con estudianteId: " + estudianteId + " y carreraId: " + materiaId + ".");
+            return Optional.empty();
+        } else {
+            int veces = estudianteMaterias.get().getCursada();
+            veces ++;
+            estudianteMaterias.get().setCursada(veces);
+            estudianteMaterias.get().setEstado(EnumEstadoMateria.ESTADO_MATERIA_CURSANDO);
+            repositorio.save(estudianteMaterias.get());
+            log.info("El estudiante {} se inscribió a la materia {}.", estudianteMaterias.get().getEstudiante().getApellido(), estudianteMaterias.get().getMateria().getNombre());
+            return estudianteMaterias;
+        }
+    }
+
+    @Override
+    public Optional<EstudianteMateria> aprobarMateria(Long estudianteId, Long materiaId) {
+        log.info("Aprobando el estudiante: " + estudianteId + " a la materia: " + materiaId + ".");
+        Optional<EstudianteMateria> estudianteMaterias = repositorio.findByEstudianteIdAndMateriaId(estudianteId, materiaId);
+        if (estudianteMaterias.isEmpty()) {
+            log.info("La tabla no posee entidades EstudianteMateria con estudianteId: " + estudianteId + " y carreraId: " + materiaId + ".");
+            return Optional.empty();
+        } else {
+            estudianteMaterias.get().setEstado(EnumEstadoMateria.ESTADO_MATERIA_APROBADA);
+            repositorio.save(estudianteMaterias.get());
+            log.info("El estudiante {} aprobó la materia {}.", estudianteMaterias.get().getEstudiante().getApellido(), estudianteMaterias.get().getMateria().getNombre());
+            return estudianteMaterias;
+        }
+    }
+
+    @Override
+    public Optional<EstudianteMateria> libreMateria(Long estudianteId, Long materiaId) {
+        log.info("Liberando el estudiante: " + estudianteId + " a la materia: " + materiaId + ".");
+        Optional<EstudianteMateria> estudianteMaterias = repositorio.findByEstudianteIdAndMateriaId(estudianteId, materiaId);
+        if (estudianteMaterias.isEmpty()) {
+            log.info("La tabla no posee entidades EstudianteMateria con estudianteId: " + estudianteId + " y carreraId: " + materiaId + ".");
+            return Optional.empty();
+        } else {
+            estudianteMaterias.get().setEstado(EnumEstadoMateria.ESTADO_MATERIA_SIN_CURSAR);
+            repositorio.save(estudianteMaterias.get());
+            log.info("El estudiante {} que libre en la materia {}.", estudianteMaterias.get().getEstudiante().getApellido(), estudianteMaterias.get().getMateria().getNombre());
+            return estudianteMaterias;
+        }
+    }
+
+    @Override
     public Long cantidad() {
         Long cuenta = repositorio.count();
         log.info("Existen {} entidades en EstudianteMateria.", cuenta);

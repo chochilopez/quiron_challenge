@@ -14,6 +14,42 @@ export default {
     }
   },
   actions: {
+    inscribirEstudiante ({ rootState }, objeto) {
+      return new Promise((resolve, reject) => {
+        axios
+          .post('http://localhost:9088/api/estudiante-materia/inscribir-materia/' + objeto.estudiante.id + '/' + objeto.materia.id)
+          .then((result) => {
+            resolve(result)
+          })
+          .catch((error) => {
+            reject(error)
+          })
+      })
+    },
+    liberarEstudiante ({ rootState }, objeto) {
+      return new Promise((resolve, reject) => {
+        axios
+          .post('http://localhost:9088/api/estudiante-materia/libre-materia/' + objeto.estudiante.id + '/' + objeto.materia.id)
+          .then((result) => {
+            resolve(result)
+          })
+          .catch((error) => {
+            reject(error)
+          })
+      })
+    },
+    aprobarEstudiante ({ rootState }, objeto) {
+      return new Promise((resolve, reject) => {
+        axios
+          .post('http://localhost:9088/api/estudiante-materia/aprobar-materia/' + objeto.estudiante.id + '/' + objeto.materia.id)
+          .then((result) => {
+            resolve(result)
+          })
+          .catch((error) => {
+            reject(error)
+          })
+      })
+    },
     getEstudianteMateriaPorIdEstudianteIdCarrera ({ rootState }, objeto) {
       return new Promise((resolve, reject) => {
         axios

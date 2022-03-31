@@ -85,15 +85,15 @@
 
           <q-item clickable v-ripple class="q-ma-md">
             <q-item-section>
-              <q-item-label class="text-black">{{ letEstudiante.titulo === null || letEstudiante.titulo === '' ? 'SIN DATOS' : letEstudiante.titulo }}</q-item-label>
-              <q-item-label caption>Titulo</q-item-label>
+              <q-item-label class="text-black">{{ letEstudiante.nombre === null || letEstudiante.nombre === '' ? 'SIN DATOS' : letEstudiante.nombre }}</q-item-label>
+              <q-item-label caption>Nombre</q-item-label>
             </q-item-section>
           </q-item>
 
           <q-item clickable v-ripple class="q-ma-md">
             <q-item-section>
-              <q-item-label class="text-black">{{ letEstudiante.grado === null || letEstudiante.grado === '' ? 'SIN DATOS' : letEstudiante.grado }}</q-item-label>
-              <q-item-label caption>Grado Académico</q-item-label>
+              <q-item-label class="text-black">{{ letEstudiante.apellido === null || letEstudiante.apellido === '' ? 'SIN DATOS' : letEstudiante.apellido }}</q-item-label>
+              <q-item-label caption>Apellido</q-item-label>
             </q-item-section>
           </q-item>
 

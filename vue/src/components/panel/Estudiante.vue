@@ -137,7 +137,7 @@
           <div class="col-12 q-pa-md text-center">
             <q-btn class="text-white bg-c-1 q-ma-sm" icon-right="save" :loading="letCargando" v-if="letEditar" label="Guardar" no-caps type="submit" />
             <q-btn class="text-white bg-c-1 q-ma-sm" icon-right="edit" :loading="letCargando" v-if="letVer" label="Editar" no-caps @click="functionAccionEditar" />
-            <q-btn class="text-black bg-c-5 q-ma-sm" icon-right="mdi-chair-rolling" :loading="letCargando" v-if="letEditar" label="Inscribir en carrera" no-caps type="submit" />
+            <q-btn class="text-black bg-c-5 q-ma-sm" icon-right="mdi-chair-rolling" :loading="letCargando" v-if="letEditar" label="Inscribir en carrera" no-caps @click="functionAccionInscribirEstudiante" />
           </div>
         </div>
       </q-form>
@@ -183,19 +183,19 @@
         </template>
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
-            <q-btn @click="functionAccionVer(props)" dense round flat class="text-c-1" icon="visibility">
+            <q-btn @click="asyncFunctionCursarMateria(props)" dense round flat class="text-c-1" icon="mdi-account-plus" v-if="props.row.estado === 'ESTADO_MATERIA_SIN_CURSAR'" >
               <q-tooltip anchor="top middle" self="bottom middle" :offset="[3, 3]" class="bg-c-1">
-                Ver
+                Inscrbir
               </q-tooltip>
             </q-btn>
-            <q-btn @click="functionAccionEditar(props)" dense round flat class="text-c-4" icon="edit">
+            <q-btn @click="asyncFunctionAprobarMateria(props)" dense round flat class="text-c-4" icon="mdi-account-check" v-if="props.row.estado === 'ESTADO_MATERIA_CURSANDO'" >
               <q-tooltip anchor="top middle" self="bottom middle" :offset="[3, 3]" class="bg-c-1">
-                Editar
+                Aprobar
               </q-tooltip>
             </q-btn>
-            <q-btn @click="functionAccionEliminar(props)" dense round flat class="text-c-6" icon="delete">
+            <q-btn @click="asyncFunctionLibreMateria(props)" dense round flat class="text-c-6" icon="mdi-account-remove" v-if="props.row.estado === 'ESTADO_MATERIA_CURSANDO'" >
               <q-tooltip anchor="top middle" self="bottom middle" :offset="[3, 3]" class="bg-c-1">
-                Eliminar
+                Libre
               </q-tooltip>
             </q-btn>
           </q-td>
@@ -203,6 +203,53 @@
       </q-table>
     </div>
   </div>
+
+  <q-dialog v-model="dialogoInscribirEstudiante" persistent transition-show="scale" transition-hide="scale">
+    <q-card class="text-black">
+      <q-bar class="bg-c-4">
+        <div>Inscribir estudiante a carrera</div>
+        <q-space />
+        <q-btn dense flat icon="close" v-close-popup>
+          <q-tooltip class="bg-c-1">Cerrar</q-tooltip>
+        </q-btn>
+      </q-bar>
+      <q-table
+        :showing="!letCargando"
+        bordered
+        title="Carreras"
+        :columns="constColumnasCarreras"
+        rows-per-page-label="Registros por pagina"
+        no-data-label="Sin datos para mostrar"
+        :pagination="constPaginacion"
+        :filter="letFilter"
+        hide-no-data
+        :rows="letCarreras"
+        row-key="name"
+      >
+        <template v-slot:top-right>
+          <q-input outlined dense debounce="300" v-model="letFilter" placeholder="Buscar" class="q-ma-md">
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
+          </q-input>
+        </template>
+        <template v-slot:body-cell-materias="props">
+          <q-td :props="props">
+            {{ props.row.planEstudio.length }}
+          </q-td>
+        </template>
+        <template v-slot:body-cell-actions="props">
+          <q-td :props="props">
+            <q-btn @click="asyncFunctionInscribirEstudianteACarrera(props)" dense round flat class="text-c-1" icon="mdi-account-plus">
+              <q-tooltip anchor="top middle" self="bottom middle" :offset="[3, 3]" class="bg-c-1">
+                Inscribir
+              </q-tooltip>
+            </q-btn>
+          </q-td>
+        </template>
+      </q-table>
+    </q-card>
+  </q-dialog>
 
 </template>
 
@@ -239,6 +286,39 @@ const constColumnas = [
     align: 'left'
   },
   {
+    name: 'cursada',
+    label: 'Veces cursada',
+    field: 'cursada',
+    sortable: true,
+    sortOrder: 'ad',
+    align: 'center'
+  },
+  {
+    name: 'actions',
+    label: 'Acciones',
+    field: '',
+    align: 'center'
+  }
+]
+
+const constColumnasCarreras = [
+  {
+    name: 'id',
+    label: 'Id Carrera',
+    field: 'id',
+    sortable: true,
+    sortOrder: 'ad',
+    align: 'center'
+  },
+  {
+    name: 'titulo',
+    label: 'Título',
+    field: 'titulo',
+    sortable: true,
+    sortOrder: 'ad',
+    align: 'left'
+  },
+  {
     name: 'actions',
     label: 'Acciones',
     field: '',
@@ -258,7 +338,9 @@ export default {
     const vueStore = useStore()
 
     const letCargando = ref(false)
+    const letCarreras = ref([])
     const letEditar = ref(false)
+    const letEstadoCarrera = ref(false)
     const letEstudiante = reactive({
       id: null,
       nombre: '',
@@ -297,13 +379,11 @@ export default {
       id: null,
       nombre: ''
     })
-    const letMaterias = ref([])
     const letVer = ref(false)
 
     const dialogoCrear = ref(false)
+    const dialogoInscribirEstudiante = ref(false)
     const dialogoQuitar = ref(false)
-
-    asyncFunctionBuscarMaterias()
 
     if (vueStore.state.estudiante.estudiante !== null) {
       asyncFunctionBuscarEstudianteCarreraPorIdEstudiante(vueStore.state.estudiante.estudiante.id)
@@ -312,9 +392,9 @@ export default {
       Object.assign(letEstudiante, vueStore.state.estudiante.estudiante)
       letEstudiante.ingresoEstudiante = helper.getFormatoFecha(letEstudiante.ingresoEstudiante)
       letEstudiante.ingresoLead = helper.getFormatoFecha(letEstudiante.ingresoLead)
-      if (vueStore.state.estudiante.accion === 'ver') {
+      if (vueStore.state.estudiante.accionEstudiante === 'ver') {
         letVer.value = true
-      } else if (vueStore.state.estudiante.accion === 'editar') {
+      } else if (vueStore.state.estudiante.accionEstudiante === 'editar') {
         letEditar.value = true
       }
     } else {
@@ -335,62 +415,62 @@ export default {
       dialogoQuitar.value = true
     }
 
+    function functionAccionInscribirEstudiante () {
+      asyncFunctionBuscarCarreras()
+      dialogoInscribirEstudiante.value = true
+    }
+
     function functionOcultar () {
       dialogoQuitar.value = false
       dialogoCrear.value = false
     }
 
-    async function asyncFunctionAgregarMateriaAEstudiante (props) {
+    async function asyncFunctionAprobarMateria (props) {
       try {
         letCargando.value = true
-        const objeto = {
-          idEstudiante: letEstudiante.id,
-          idMateria: props.row.id
+        const result = await vueStore.dispatch('aprobarEstudiante', props.row)
+        if (result.status === 200) {
+          servicioAlertas.alertaExito('La materia fue aprobada correctamente.')
+          asyncFunctionBuscarEstudianteMateriasPorEstudianteCarrera(props.row)
         }
-        await vueStore.dispatch('agregarMateriaAEstudiante', objeto).then((result) => {
-          if (result.status === 200) {
-            servicioAlertas.alertaExito('La materia fue agregada correctamente del plan de estudios.')
-            Object.assign(letEstudiante, result.data)
-          }
-          if (result.status === 202) {
-            servicioAlertas.alertaAdvertencia(result.headers.estado)
-            console.warn('Advertencia', result.headers.estado)
-          }
-          letCargando.value = false
-          functionOcultar()
-        })
+        if (result.status === 202) {
+          servicioAlertas.alertaAdvertencia(result.headers.estado)
+          console.warn('Advertencia', result.headers.estado)
+        }
+        letCargando.value = false
+        functionOcultar()
       } catch (err) {
         letCargando.value = false
-        console.error('Error front', 'assign -> add error -> ' + err.message)
+        console.error('Error front', 'assign -> error -> ' + err.message)
         console.error('Error api', err.headers.estado)
         servicioAlertas.alertaError(err.headers.estado)
       }
     }
 
-    async function asyncFunctionBorrarMateriaDeEstudiante () {
+    async function asyncFunctionBuscarCarreras () {
       try {
         letCargando.value = true
-        const objeto = {
-          idEstudiante: letEstudiante.id,
-          idMateria: letMateria.id
-        }
-        await vueStore.dispatch('delMateriaDeEstudiante', objeto).then((result) => {
-          if (result.status === 200) {
-            servicioAlertas.alertaExito('La materia fue eliminada correctamente del plan de estudios.')
-            Object.assign(letEstudiante, result.data)
-          }
-          if (result.status === 202) {
-            servicioAlertas.alertaAdvertencia(result.headers.estado)
-            console.warn('Advertencia', result.headers.estado)
-          }
+        const datos = await vueStore.dispatch('getCarreras')
+        if (datos.status === 200) {
           letCargando.value = false
-          functionOcultar()
-        })
+          letCarreras.value = await datos.data
+        } else if (datos.status === 202) {
+          const mensaje = 'Error al cargar carreras ' + datos.headers.estado
+          servicioAlertas.infoAdvertencia(mensaje)
+          console.warn(mensaje)
+        } else {
+          const mensaje = 'Error al cargar carreras ' + datos.status
+          servicioAlertas.infoError(mensaje)
+          console.error(mensaje)
+        }
+        functionOcultar()
+        letCargando.value = false
       } catch (err) {
         letCargando.value = false
-        console.error('Error front', 'assign -> delete error -> ' + err.message)
-        console.error('Error api', err.headers.estado)
-        servicioAlertas.alertaError(err.headers.estado)
+        functionOcultar()
+        const error = 'Hubo un error al intentar cargar las carreras ' + err
+        servicioAlertas.infoError(error)
+        console.error(error)
       }
     }
 
@@ -401,7 +481,6 @@ export default {
         if (datos.status === 200) {
           letCargando.value = false
           letEstudianteCarreras.value = await datos.data
-          console.log(letEstudianteCarreras)
         } else if (datos.status === 202) {
           const mensaje = 'Error al cargar las carreras del estudiante ' + datos.headers.estado
           servicioAlertas.infoAdvertencia(mensaje)
@@ -449,30 +528,25 @@ export default {
       }
     }
 
-    async function asyncFunctionBuscarMaterias () {
+    async function asyncFunctionCursarMateria (props) {
       try {
         letCargando.value = true
-        const datos = await vueStore.dispatch('getMaterias')
-        if (datos.status === 200) {
-          letCargando.value = false
-          letMaterias.value = await datos.data
-        } else if (datos.status === 202) {
-          const mensaje = 'Error al cargar materias ' + datos.headers.estado
-          servicioAlertas.infoAdvertencia(mensaje)
-          console.warn(mensaje)
-        } else {
-          const mensaje = 'Error al cargar materias ' + datos.status
-          servicioAlertas.infoError(mensaje)
-          console.error(mensaje)
+        const result = await vueStore.dispatch('inscribirEstudiante', props.row)
+        if (result.status === 200) {
+          servicioAlertas.alertaExito('La materia fue inscripta correctamente.')
+          asyncFunctionBuscarEstudianteMateriasPorEstudianteCarrera(props.row)
         }
-        functionOcultar()
+        if (result.status === 202) {
+          servicioAlertas.alertaAdvertencia(result.headers.estado)
+          console.warn('Advertencia', result.headers.estado)
+        }
         letCargando.value = false
+        functionOcultar()
       } catch (err) {
         letCargando.value = false
-        functionOcultar()
-        const error = 'Hubo un error al intentar cargar las materias ' + err
-        servicioAlertas.infoError(error)
-        console.error(error)
+        console.error('Error front', 'assign -> error -> ' + err.message)
+        console.error('Error api', err.headers.estado)
+        servicioAlertas.alertaError(err.headers.estado)
       }
     }
 
@@ -502,7 +576,7 @@ export default {
         } catch (err) {
           letCargando.value = false
           functionOcultar()
-          console.error('Error front', 'panel-images -> image -> save error -> ' + err.message)
+          console.error('Error front', 'save error -> ' + err.message)
           console.error('Error api', err.headers.estado)
           servicioAlertas.alertaError(err.headers.estado)
         }
@@ -511,25 +585,83 @@ export default {
       }
     }
 
+    async function asyncFunctionInscribirEstudianteACarrera (props) {
+      try {
+        letCargando.value = true
+        dialogoInscribirEstudiante.value = false
+        const objeto = {
+          idEstudiante: letEstudiante.id,
+          idCarrera: props.row.id
+        }
+        await vueStore.dispatch('enrollEstudianteCarrera', objeto).then((result) => {
+          if (result.status === 200) {
+            asyncFunctionBuscarEstudianteCarreraPorIdEstudiante(objeto.idEstudiante)
+            servicioAlertas.alertaExito('Se inscribio correctamente el estudiante a la carrera.')
+          } else if (result.status === 202) {
+            servicioAlertas.alertaAdvertencia(result.headers.estado)
+            console.warn('Advertencia', result.headers.estado)
+          }
+          letCargando.value = false
+          functionOcultar()
+        })
+      } catch (err) {
+        letCargando.value = false
+        functionOcultar()
+        console.error('Error front', 'save error -> ' + err.message)
+        console.error('Error api', err.headers.estado)
+        servicioAlertas.alertaError(err.headers.estado)
+      }
+    }
+
+    async function asyncFunctionLibreMateria (props) {
+      try {
+        letCargando.value = true
+        const result = await vueStore.dispatch('liberarEstudiante', props.row)
+        if (result.status === 200) {
+          servicioAlertas.alertaExito('El estudiante quedo libre correctamente.')
+          asyncFunctionBuscarEstudianteMateriasPorEstudianteCarrera(props.row)
+        }
+        if (result.status === 202) {
+          servicioAlertas.alertaAdvertencia(result.headers.estado)
+          console.warn('Advertencia', result.headers.estado)
+        }
+        letCargando.value = false
+        functionOcultar()
+      } catch (err) {
+        letCargando.value = false
+        console.error('Error front', 'assign -> error -> ' + err.message)
+        console.error('Error api', err.headers.estado)
+        servicioAlertas.alertaError(err.headers.estado)
+      }
+    }
+
     return {
-      asyncFunctionAgregarMateriaAEstudiante,
-      asyncFunctionBorrarMateriaDeEstudiante,
+      asyncFunctionAprobarMateria,
+      asyncFunctionBuscarCarreras,
       asyncFunctionBuscarEstudianteCarreraPorIdEstudiante,
       asyncFunctionBuscarEstudianteMateriasPorEstudianteCarrera,
+      asyncFunctionCursarMateria,
       asyncFunctionGuardarEstudiante,
+      asyncFunctionInscribirEstudianteACarrera,
+      asyncFunctionLibreMateria,
 
       constColumnas,
+      constColumnasCarreras,
       constPaginacion,
 
       dialogoCrear,
+      dialogoInscribirEstudiante,
       dialogoQuitar,
 
       functionAccionCrear,
       functionAccionEditar,
       functionAccionEliminar,
+      functionAccionInscribirEstudiante,
 
       letCargando,
+      letCarreras,
       letEditar,
+      letEstadoCarrera,
       letEstudiante,
       letEstudianteCarrera,
       letEstudianteCarreras,
@@ -540,7 +672,6 @@ export default {
       letFormulario,
       letLink,
       letMateria,
-      letMaterias,
       letVer,
 
       rules: {

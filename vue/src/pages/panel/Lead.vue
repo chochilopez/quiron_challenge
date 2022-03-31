@@ -1,16 +1,16 @@
 <template>
   <div class="row">
     <div class="col">
-      <Leads />
+      <Lead />
     </div>
   </div>
 </template>
 
 <script>
-import Leads from 'src/components/panel/Leads.vue'
+import Lead from 'src/components/panel/Lead.vue'
 export default {
   components: {
-    Leads
+    Lead
   },
   setup () {
     return {}

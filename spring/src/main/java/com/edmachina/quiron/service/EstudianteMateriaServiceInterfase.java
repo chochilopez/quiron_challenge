@@ -10,6 +10,10 @@ public interface EstudianteMateriaServiceInterfase {
 
     List<EstudianteMateria> inscribirMaterias(EstudianteCarrera estudianteCarrera);
 
+    Optional<EstudianteMateria> inscribirMateria(Long estudianteId, Long materiaId);
+    Optional<EstudianteMateria> aprobarMateria(Long estudianteId, Long materiaId);
+    Optional<EstudianteMateria> libreMateria(Long estudianteId, Long materiaId);
+
     List<EstudianteMateria> findAllByEstudianteId(Long id);
     List<EstudianteMateria> findAllByMateriaId(Long id);
     List<EstudianteMateria> findAllByCarreraId(Long id);

@@ -27,6 +27,84 @@ public class EstudianteMateriaController {
     private final EstudianteMateriaServiceImplementation service;
 
     @Operation(
+            summary = "aprobarMateria - Aprobar materia.",
+            description = "Este endpoint recibe un idEstudiante y un idMateria, devulve una entidad EstudianteMateria (aprobada) si existiere."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK Endpoint consumido correctamente, 1 ocurrencia. Mas info en campo estado en el header."),
+            @ApiResponse(responseCode = "202", description = "ACCEPTED Endpoint consumido correctamente, 0 ocurrencias. Mas info en campo estado en el header.")
+    })
+    @PostMapping(value = "/aprobar-materia/{idEstudiante}/{idMateria}")
+    public ResponseEntity<EstudianteMateria> aprobarMateria(
+            @Parameter(description = "Valor númerico de tipo Long correspondiente al id de la entidad Estudiante.", required = true, example = "4")
+            @PathVariable(name = "idEstudiante") @javax.validation.constraints.Size(min = 1, max = 10) Long idEstudiante,
+            @Parameter(description = "Valor númerico de tipo Long correspondiente al id de la entidad Materia.", required = true, example = "4")
+            @PathVariable(name = "idMateria") @javax.validation.constraints.Size(min = 1, max = 10) Long idMateria
+    ) {
+        Optional<EstudianteMateria> estudianteMateria = service.aprobarMateria(idEstudiante, idMateria);
+        if (estudianteMateria.isPresent())
+            return new ResponseEntity<>(estudianteMateria.get(), Helper.cabeceraHTTP(
+                    "Se aprobó la entidad EstudianteMateria con idEstudiante: " + idEstudiante + " e idCarrera: " + idMateria + "."
+            ), HttpStatus.OK);
+        else
+            return ResponseEntity.accepted().headers(Helper.cabeceraHTTP(
+                    "EstudianteMateria no posee entidades con idEstudiante: " + idEstudiante + " e idCarrera: " + idMateria + "."
+            )).build();
+    }
+
+    @Operation(
+            summary = "inscribirMateria - Inscribir a materia.",
+            description = "Este endpoint recibe un idEstudiante y un idMateria, devulve una entidad EstudianteMateria (inscripto) si existiere."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK Endpoint consumido correctamente, 1 ocurrencia. Mas info en campo estado en el header."),
+            @ApiResponse(responseCode = "202", description = "ACCEPTED Endpoint consumido correctamente, 0 ocurrencias. Mas info en campo estado en el header.")
+    })
+    @PostMapping(value = "/inscribir-materia/{idEstudiante}/{idMateria}")
+    public ResponseEntity<EstudianteMateria> inscribirMateria(
+            @Parameter(description = "Valor númerico de tipo Long correspondiente al id de la entidad Estudiante.", required = true, example = "4")
+            @PathVariable(name = "idEstudiante") @javax.validation.constraints.Size(min = 1, max = 10) Long idEstudiante,
+            @Parameter(description = "Valor númerico de tipo Long correspondiente al id de la entidad Materia.", required = true, example = "4")
+            @PathVariable(name = "idMateria") @javax.validation.constraints.Size(min = 1, max = 10) Long idMateria
+    ) {
+        Optional<EstudianteMateria> estudianteMateria = service.inscribirMateria(idEstudiante, idMateria);
+        if (estudianteMateria.isPresent())
+            return new ResponseEntity<>(estudianteMateria.get(), Helper.cabeceraHTTP(
+                    "Se inscribio la entidad EstudianteMateria con idEstudiante: " + idEstudiante + " e idCarrera: " + idMateria + "."
+            ), HttpStatus.OK);
+        else
+            return ResponseEntity.accepted().headers(Helper.cabeceraHTTP(
+                    "EstudianteMateria no posee entidades con idEstudiante: " + idEstudiante + " e idCarrera: " + idMateria + "."
+            )).build();
+    }
+
+    @Operation(
+            summary = "libreMateria - Libre materia.",
+            description = "Este endpoint recibe un idEstudiante y un idMateria, devulve una entidad EstudianteMateria (libre) si existiere."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK Endpoint consumido correctamente, 1 ocurrencia. Mas info en campo estado en el header."),
+            @ApiResponse(responseCode = "202", description = "ACCEPTED Endpoint consumido correctamente, 0 ocurrencias. Mas info en campo estado en el header.")
+    })
+    @PostMapping(value = "/libre-materia/{idEstudiante}/{idMateria}")
+    public ResponseEntity<EstudianteMateria> libreMateria(
+            @Parameter(description = "Valor númerico de tipo Long correspondiente al id de la entidad Estudiante.", required = true, example = "4")
+            @PathVariable(name = "idEstudiante") @javax.validation.constraints.Size(min = 1, max = 10) Long idEstudiante,
+            @Parameter(description = "Valor númerico de tipo Long correspondiente al id de la entidad Materia.", required = true, example = "4")
+            @PathVariable(name = "idMateria") @javax.validation.constraints.Size(min = 1, max = 10) Long idMateria
+    ) {
+        Optional<EstudianteMateria> estudianteMateria = service.libreMateria(idEstudiante, idMateria);
+        if (estudianteMateria.isPresent())
+            return new ResponseEntity<>(estudianteMateria.get(), Helper.cabeceraHTTP(
+                    "Se liberó la entidad EstudianteMateria con idEstudiante: " + idEstudiante + " e idCarrera: " + idMateria + "."
+            ), HttpStatus.OK);
+        else
+            return ResponseEntity.accepted().headers(Helper.cabeceraHTTP(
+                    "EstudianteMateria no posee entidades con idEstudiante: " + idEstudiante + " e idCarrera: " + idMateria + "."
+            )).build();
+    }
+
+    @Operation(
             summary = "count - Cantidad de entidades existentes.",
             description = "Devuelve un entero con la cantidad de entidades de tipo EstudianteMateria existentes."
     )

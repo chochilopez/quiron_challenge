@@ -13,4 +13,5 @@ public interface EstudianteCarreraRepository extends JpaRepository<EstudianteCar
     List<EstudianteCarrera> findAllByEstudianteId(Long id);
     List<EstudianteCarrera> findAllByCarreraId(Long id);
     Optional<EstudianteCarrera> findByEstudianteIdAndCarreraId(Long estudianteId, Long carreraId);
+    Boolean existsByEstudianteIdAndCarreraId(Long estudianteId, Long carreraId);
 }

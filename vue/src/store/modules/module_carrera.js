@@ -2,13 +2,13 @@ import axios from 'axios'
 
 export default {
   state: {
-    accionEstudiante: null,
+    accionCarrera: null,
     carrera: null,
     carreras: null
   },
   mutations: {
-    setAccionEstudiante (state, accionEstudiante) {
-      state.accionEstudiante = accionEstudiante
+    setAccionCarrera (state, accionCarrera) {
+      state.accionCarrera = accionCarrera
     },
     setCarrera (state, carrera) {
       state.carrera = carrera

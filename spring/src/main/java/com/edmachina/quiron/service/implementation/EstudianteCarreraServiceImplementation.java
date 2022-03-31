@@ -42,15 +42,17 @@ public class EstudianteCarreraServiceImplementation implements EstudianteCarrera
             Optional<Estudiante> estudiante=estudianteRepository.findById(idEstudiante);
             Optional<Carrera> carrera=carreraRepository.findById(idCarrera);
             if (carrera.isPresent() && estudiante.isPresent()) {
-                EstudianteCarrera estudianteCarrera=new EstudianteCarrera(estudiante.get(), carrera.get(), Helper.getHoy(), null);
-                if (estudiante.get().getStatus() == EnumEstadoEstudiante.ESTADO_LEAD) {
-                    estudiante.get().setStatus(EnumEstadoEstudiante.ESTADO_ESTUDIANTE);
-                    estudiante.get().setIngresoEstudiante(Helper.getHoy());
-                    estudianteRepository.save(estudiante.get());
+                if (!repositorio.existsByEstudianteIdAndCarreraId(idEstudiante, idCarrera)) {
+                    EstudianteCarrera estudianteCarrera=new EstudianteCarrera(estudiante.get(), carrera.get(), Helper.getHoy(), null);
+                    if (estudiante.get().getStatus() == EnumEstadoEstudiante.ESTADO_LEAD) {
+                        estudiante.get().setStatus(EnumEstadoEstudiante.ESTADO_ESTUDIANTE);
+                        estudiante.get().setIngresoEstudiante(Helper.getHoy());
+                        estudianteRepository.save(estudiante.get());
+                    }
+                    repositorio.save(estudianteCarrera);
+                    estudianteMateriaServiceImplementation.inscribirMaterias(estudianteCarrera);
+                    return estudianteCarrera;
                 }
-                repositorio.save(estudianteCarrera);
-                estudianteMateriaServiceImplementation.inscribirMaterias(estudianteCarrera);
-                return estudianteCarrera;
             }
             log.warn("Ocurrio un error al inscribir el estudiante: {} a la carrera: {}.", idEstudiante, idCarrera);
         } catch (Exception exepcion) {

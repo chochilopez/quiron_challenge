@@ -2,15 +2,16 @@ import axios from 'axios'
 
 export default {
   state: {
-    accionCarrera: null,
+    accionEstudiante: null,
     allEstudiantes: null,
     estudiante: null,
     estudiantes: null,
+    lead: null,
     leads: null
   },
   mutations: {
-    setAccionCarrera (state, accionCarrera) {
-      state.accionCarrera = accionCarrera
+    setAccionEstudiante (state, accionEstudiante) {
+      state.accionEstudiante = accionEstudiante
     },
     setAllEstudiantes (state, allEstudiantes) {
       state.allEstudiantes = allEstudiantes
@@ -20,6 +21,9 @@ export default {
     },
     setEstudiantes (state, estudiante) {
       state.estudiante = estudiante
+    },
+    setLead (state, lead) {
+      state.lead = lead
     },
     setLeads (state, leads) {
       state.leads = leads

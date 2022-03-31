@@ -86,6 +86,7 @@ public class EstudianteServiceImplementation implements EstudianteServiceInterfa
     public Estudiante insert(Estudiante estudiante) throws Exception {
         try {
             log.info("Insertando la entidad Estudiante: {}.",  estudiante);
+            estudiante.setIngresoLead(Helper.getHoy());
             repositorio.save(estudiante);
             log.info("Se insertó correctamente la entidad Estudiante: {}.", estudiante);
             return estudiante;

@@ -14,6 +14,18 @@ export default {
     }
   },
   actions: {
+    enrollEstudianteCarrera ({ rootState }, objeto) {
+      return new Promise((resolve, reject) => {
+        axios
+          .post('http://localhost:9088/api/estudiante-carrera/inscribir-estudiante/' + objeto.idEstudiante + '/' + objeto.idCarrera)
+          .then((result) => {
+            resolve(result)
+          })
+          .catch((error) => {
+            reject(error)
+          })
+      })
+    },
     getCantidadEstudianteCarrera ({ rootState }) {
       return new Promise((resolve, reject) => {
         axios
