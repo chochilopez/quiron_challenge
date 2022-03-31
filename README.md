@@ -20,6 +20,9 @@ Descargar zip del projecto y ejecutar (docker compose) en la carpeta raiz
   #### `$ docker exec -ti nombreDelContenedor sh` 
   Una vez localizado el nombre del contenedor, reemplazar por nombreDelContenedor
 
+  #### `$ cd quiron_frontend` 
+  Para acceder a carpeta donde se encuentra la aplicacion
+
   #### `$ quasar dev` 
   Para correr la aplicacion web, ingresar manualmente desde el navegador a localhost:8080
   
@@ -76,10 +79,5 @@ Descargar zip del projecto y ejecutar (docker compose) en la carpeta raiz
       VueRouter - rutas de la pagina y su gestion
 
   #### src/store
-      Vuex - libreria de manejo de estados, manera de persistir informacion entre 
-      sesiones o paginas
-  
-
-  ## Problemas
-    Si bien al ejecutar el docker no fallan los contenedores, hay un error en el store 
-    (almacenamiento de estados) que no permite la conexion con la base de datos.
+      Pinia - libreria de manejo de estados, manera de persistir informacion entre 
+      sesiones o paginas. Se migro de vuex - deprecada
