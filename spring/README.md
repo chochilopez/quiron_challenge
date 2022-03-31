@@ -1,1 +1,0 @@
-# quiron_challenge
