@@ -1,7 +1,6 @@
 package com.edmachina.quiron.service;
 
 import com.edmachina.quiron.model.Estudiante;
-import com.edmachina.quiron.model.enumerator.EnumEstadoEstudiante;
 
 import java.util.List;
 import java.util.Optional;

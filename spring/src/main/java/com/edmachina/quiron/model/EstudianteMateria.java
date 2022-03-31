@@ -2,7 +2,9 @@ package com.edmachina.quiron.model;
 
 import com.edmachina.quiron.model.enumerator.EnumEstadoMateria;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.util.Date;
 

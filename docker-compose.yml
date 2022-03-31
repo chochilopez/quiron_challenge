@@ -1,58 +1,43 @@
-version: '3.3'
+version: '3'
 
 services:
-    #service 1: definition of mysql database
-    db:
-      image: mysql:latest
-      container_name: mysql-db  
-      environment:
-        - MYSQL_ROOT_PASSWORD=Lfjk4583!
-      ports:
-        - "9306:3306"
-      restart: always
 
-    #service 2: definition of phpMyAdmin
-    phpmyadmin:
-      image: phpmyadmin/phpmyadmin:latest
-      container_name: my-php-myadmin
-      ports:
-        - "8082:80"
-      restart: always
+  dbpostgresql:
+    image: postgres:14.2-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=Lfjk4583
+      - POSTGRES_USER=quiron
+      - POSTGRES_DB=cronida
 
-      depends_on:
-        - db
-      environment:
-        SPRING_DATASOURCE_USERNAME: queiron
-        SPRING_DATASOURCE_PASSWORD: Lfjk4583!
+  springboot:
+    image: openjdk:11
+    container_name: spring
+    build:
+      context: spring
+      dockerfile: Dockerfile
+    ports:
+      - "9088:9088"
+    restart: always
+    depends_on:
+      - dbpostgresql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://dbpostgresql:5432/cronida
+      SPRING_DATASOURCE_USERNAME: quiron
+      SPRING_DATASOURCE_PASSWORD: Lfjk4583
 
-    frontend:
-      build:
-          context: vue
-      ports:
-        - "8080:8080"
-      volumes:
-        - .:/home/node/app:rw
-      restart: "no"
-      command: sh
-      stdin_open: true
-      tty: true
-      environment:
-        - CHOKIDAR_USEPOLLING=true
-
-    #service 3: definition of your spring-boot app 
-    customerservice:                        #it is just a name, which will be used only in this file.
-      image: property-service               #name of the image after dockerfile executes
-      container_name: property-service-app  #name of the container created from docker image
-      build:
-        context: spring                          #docker file path (. means root directory)
-        dockerfile: Dockerfile              #docker file name
-      ports:
-        - "9088:9088"                       #docker containter port with your os port
-      restart: always
-
-      depends_on:                           #define dependencies of this app
-        - db                                #dependency name (which is defined with this name 'db' in this file earlier)
-      environment:
-        SPRING_DATASOURCE_URL: jdbc:mysql://localhost:9306/cronida?createDatabaseIfNotExist=true&autoReconnect=true&useSSL=false
-        SPRING_DATASOURCE_USERNAME: queiron
-        SPRING_DATASOURCE_PASSWORD: Lfjk4583!
+  frontend:
+    build:
+      context: vue
+      dockerfile: Dockerfile
+    ports: 
+      - "8080:8080"
+    volumes: 
+      - .:/home/node/app:rw
+    restart: "no"
+    command: sh
+    stdin_open: true
+    tty: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true

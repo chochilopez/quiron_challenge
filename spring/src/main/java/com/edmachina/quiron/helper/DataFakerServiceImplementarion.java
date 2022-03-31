@@ -1,12 +1,15 @@
 package com.edmachina.quiron.helper;
 
-import com.edmachina.quiron.model.*;
+import com.edmachina.quiron.model.Carrera;
+import com.edmachina.quiron.model.Estudiante;
+import com.edmachina.quiron.model.EstudianteCarrera;
+import com.edmachina.quiron.model.Materia;
 import com.edmachina.quiron.model.enumerator.EnumEstadoEstudiante;
-import com.edmachina.quiron.model.enumerator.EnumEstadoMateria;
 import com.edmachina.quiron.model.enumerator.EnumTituloGrado;
-import com.edmachina.quiron.repository.*;
+import com.edmachina.quiron.repository.CarreraRepository;
+import com.edmachina.quiron.repository.EstudianteRepository;
+import com.edmachina.quiron.repository.MateriaRepository;
 import com.edmachina.quiron.service.implementation.EstudianteCarreraServiceImplementation;
-import com.edmachina.quiron.service.implementation.EstudianteMateriaServiceImplementation;
 import com.github.javafaker.Faker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

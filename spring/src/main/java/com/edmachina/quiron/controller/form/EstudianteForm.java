@@ -1,17 +1,11 @@
 package com.edmachina.quiron.controller.form;
 
 import com.edmachina.quiron.model.Estudiante;
-import com.edmachina.quiron.model.EstudianteCarrera;
-import com.edmachina.quiron.model.EstudianteMateria;
 import com.edmachina.quiron.model.enumerator.EnumEstadoEstudiante;
 import io.swagger.v3.oas.annotations.Hidden;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import java.util.Date;
-import java.util.Set;
 
 @Getter
 @Hidden

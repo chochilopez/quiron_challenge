@@ -1,17 +1,16 @@
 package com.edmachina.quiron.service.implementation;
 
 import com.edmachina.quiron.helper.Helper;
-import com.edmachina.quiron.model.*;
+import com.edmachina.quiron.model.Estudiante;
 import com.edmachina.quiron.model.enumerator.EnumEstadoEstudiante;
-import com.edmachina.quiron.repository.CarreraRepository;
-import com.edmachina.quiron.repository.EstudianteCarreraRepository;
 import com.edmachina.quiron.repository.EstudianteRepository;
 import com.edmachina.quiron.service.EstudianteServiceInterfase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j

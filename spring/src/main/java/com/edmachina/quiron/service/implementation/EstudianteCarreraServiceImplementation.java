@@ -4,7 +4,6 @@ import com.edmachina.quiron.helper.Helper;
 import com.edmachina.quiron.model.Carrera;
 import com.edmachina.quiron.model.Estudiante;
 import com.edmachina.quiron.model.EstudianteCarrera;
-import com.edmachina.quiron.model.EstudianteMateria;
 import com.edmachina.quiron.model.enumerator.EnumEstadoEstudiante;
 import com.edmachina.quiron.repository.CarreraRepository;
 import com.edmachina.quiron.repository.EstudianteCarreraRepository;

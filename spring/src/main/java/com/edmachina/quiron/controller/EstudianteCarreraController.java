@@ -2,8 +2,6 @@ package com.edmachina.quiron.controller;
 
 import com.edmachina.quiron.controller.form.EstudianteCarreraForm;
 import com.edmachina.quiron.helper.Helper;
-import com.edmachina.quiron.model.Carrera;
-import com.edmachina.quiron.model.Estudiante;
 import com.edmachina.quiron.model.EstudianteCarrera;
 import com.edmachina.quiron.service.implementation.EstudianteCarreraServiceImplementation;
 import io.swagger.v3.oas.annotations.Operation;
