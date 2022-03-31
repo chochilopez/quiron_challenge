@@ -13,9 +13,9 @@ services:
 
   springboot:
     image: openjdk:11
-    container_name: spring
+    container_name: quiron_backend
     build:
-      context: spring
+      context: quiron_backend
       dockerfile: Dockerfile
     ports:
       - "9088:9088"
@@ -29,8 +29,9 @@ services:
 
   frontend:
     build:
-      context: vue
+      context: quiron_frontend
       dockerfile: Dockerfile
+    container_name: quiron_frontend
     ports: 
       - "8080:8080"
     volumes: 
