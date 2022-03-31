@@ -1,27 +1,72 @@
-# PlatziVideo
+# EdMachina Challenge
 
-PlatziVideo es la plataforma que te permite ver videos on demand y además 
-te enseña JavaScript de cero a rockstar.
+Pequeña aplicacion que permite la carga de leads y convertirlos a estudiantes.
+Spring Boot 2.6.5
+Vue 3
+Quasar 2
+PostgreSQL
 
 ## Instalación
 
-Puedes instalarlo desde npm
+Descargar zip del projecto y ejecutar (docker compose) en la carpeta raiz
 
-`$ npm install platzi-video`
+`$ docker-compose build`
+`$ docker-compose up -d`
+`$ docker-compose ps` Para localizar el contenedor donde se ejecuta vue
+`$ docker exec -ti nombreDelContenedor sh` Una vez localizado el nombre del contenedor, reemplazar por nombreDelContenedor
+`$ quasar dev` Para correr la aplicacion web, ingresar manualmente desde el navegador a localhost:8080
 
-O también clonando el repositorio
+## Accessos
+  ### Apis Spring 
+    localhost:9088
 
-`$ git clone url`
+  ### Documentacion endpoints
+    localhost:9088/api-quiron.html
 
-## Cómo se usa
+  ### Apliacion
+    localhost:8080
 
-`import PlatziVideo`
-`video = PlatziVideo()`
+## Secciones
+  ## Backend - Spring Boot
+    El proyecto esta dividido de la siguiente manera:
 
-## Cómo contribuir
+  ### Controller
+      Endpoints divididos por modelo.
 
-Puedes crear un pull request al proyecto
+  ### helper
+      Clases de ayuda, mocker.
 
-## Licencia
+  ### model
+      Modelos de entidades: Carrera, Estudiante, EstudianteCarrera (pivot), EstudianteMateria (pivot), Materia.
 
-MIT
+  ### repository
+      Acceso a datos, un repositorio por clase con sus respectivos metodos.
+
+  ### service e implementation
+      Interfaces o contratos de servicio, luego, implmentaciones de los mismos.
+
+      Asimismo, gran parte del proyecto esta documentada a traves de OpenApi y Swagger ui, se accede a la misma
+
+  ## Frontend - Quasar Framework (vue 3)
+
+  ### src/assets
+      Multimedia
+
+  ### src/components
+      componentes modulares de las paginas
+
+  ### src/layout
+      paginas de tipo marco
+
+  ### src/pages
+      paginas del sitio
+
+  ### src/router
+      VueRouter - rutas de la pagina y su gestion
+
+  ### src/store
+      Vuex - libreria de manejo de estados, manera de persistir informacion entre sesiones o paginas
+  
+
+  ## Problemas
+    Si bien al ejecutar el docker no fallan los contenedores, hay un error en el store (almacenamiento de estados) que no permite la conexion con la base de datos.
