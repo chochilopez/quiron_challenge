@@ -10,14 +10,19 @@ PostgreSQL
 
 Descargar zip del projecto y ejecutar (docker compose) en la carpeta raiz
 
-### `$ docker-compose build`
-### `$ docker-compose up -d`
-### `$ docker-compose ps` 
-Para localizar el contenedor donde se ejecuta vue
-### `$ docker exec -ti nombreDelContenedor sh` 
-Una vez localizado el nombre del contenedor, reemplazar por nombreDelContenedor
-### `$ quasar dev` 
-Para correr la aplicacion web, ingresar manualmente desde el navegador a localhost:8080
+  #### `$ docker-compose build`
+
+  #### `$ docker-compose up -d`
+
+  #### `$ docker-compose ps` 
+  Para localizar el contenedor donde se ejecuta vue
+
+  #### `$ docker exec -ti nombreDelContenedor sh` 
+  Una vez localizado el nombre del contenedor, reemplazar por nombreDelContenedor
+
+  #### `$ quasar dev` 
+  Para correr la aplicacion web, ingresar manualmente desde el navegador a localhost:8080
+  
 
 ## Accessos
   ### Apis Spring 
